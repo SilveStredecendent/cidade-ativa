@@ -1,99 +1,164 @@
 # Cidade Ativa
 
-O **Cidade Ativa** é uma plataforma web e mobile voltada para a gestão inteligente de ocorrências urbanas[cite: 2]. O projeto visa organizar as demandas municipais, oferecer transparência no fluxo de atendimento e gerar métricas para a gestão pública[cite: 2].
+> Plataforma web para registro, acompanhamento e gestão de ocorrências urbanas municipais.
 
-Este projeto é fruto do **Projeto Integrador V** do curso de Engenharia de Software da **Unifio**[cite: 2].
+O **Cidade Ativa** conecta cidadãos e órgãos públicos em um fluxo transparente e organizado de atendimento às demandas da cidade — de buracos na rua a ações de saúde pública.
+
+Este projeto é desenvolvido no **Projeto Integrador V** do curso de Engenharia de Software da **Unifio — Centro Universitário de Ourinhos**, 2026.
 
 ---
 
-## Funcionalidades Principais (MVP)
+## uncionalidades Principais (MVP)
 
-- **Cidadão**: Registro de ocorrências com geolocalização e fotos, confirmação de demandas existentes e acompanhamento de status[cite: 2, 5].
-- **Gestor**: Triagem de ocorrências, atribuição de equipes, definição de prioridades e publicação de ações públicas[cite: 2, 5].
-- **Atendente**: Visualização de demandas da equipe e registro de execução de ordens de serviço[cite: 2, 5].
-- **Administrador**: Gerenciamento global de secretarias, equipes e usuários[cite: 2, 5].
+| Perfil            | Funcionalidades                                                                                                         |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| **Cidadão**       | Registrar ocorrências com foto e geolocalização, confirmar demandas existentes, acompanhar status e avaliar atendimento |
+| **Gestor**        | Triagem de ocorrências, atribuição de equipes, definição de prioridades e publicação de ações públicas                  |
+| **Atendente**     | Visualizar demandas da equipe, registrar execução e finalizar Ordens de Serviço                                         |
+| **Administrador** | Gerenciamento global de secretarias, equipes e usuários                                                                 |
 
 ---
 
 ## Tecnologias Utilizadas
 
-- **Front-end**: React.js + Vite[cite: 5]
-- **Comunicação**: Axios (API RESTful)[cite: 2, 5]
-- **Estilização**: Tailwind CSS / CSS-in-JS[cite: 5]
-- **Mapas**: Google Maps API[cite: 2, 5]
-- **Gestão de Estado**: React Context API & Hooks[cite: 5]
+| Camada            | Tecnologia                      |
+| ----------------- | ------------------------------- |
+| **Framework**     | React 18 + Vite                 |
+| **Roteamento**    | React Router DOM v6             |
+| **UI Components** | shadcn/ui (Radix + preset Nova) |
+| **Estilização**   | Tailwind CSS v4                 |
+| **Ícones**        | Lucide React                    |
+| **Fonte**         | Geist Variable                  |
+| **HTTP Client**   | Axios                           |
+| **Mapas**         | Google Maps API                 |
+| **Estado Global** | React Context API + Hooks       |
 
 ---
 
 ## Estrutura de Pastas
 
-O projeto segue o padrão **SoC (Separation of Concerns)** para garantir manutenibilidade[cite: 5]:
+O projeto segue o padrão **SoC (Separation of Concerns)**:
 
 ```text
 cidade-ativa/
-├── public/                 # Ativos estáticos globais
-├── src/                    # Código-fonte principal
-│   ├── assets/             # Logos e ícones de categorias
-│   ├── components/         # Peças reutilizáveis (MapView, StatusBadge)
-│   ├── pages/              # Módulos por ator (Home, Admin, Atendimento)
-│   ├── services/           # Chamadas à API e integração externa
-│   ├── context/            # Estado global e autenticação (RBAC)
-│   ├── hooks/              # Lógica compartilhada (useAuth)
-│   └── App.jsx             # Roteador central
-└── .env                    # Variáveis de ambiente (Chaves de API)
+├── public/
+├── src/
+│   ├── assets/
+│   ├── components/
+│   │   ├── ui/
+│   │   │   ├── button.jsx
+│   │   │   ├── card.jsx
+│   │   │   ├── badge.jsx
+│   │   │   ├── dialog.jsx
+│   │   │   ├── input.jsx
+│   │   │   ├── select.jsx
+│   │   │   ├── sidebar.jsx
+│   │   │   ├── table.jsx
+│   │   │   └── ...
+│   │   ├── MapView.jsx
+│   │   ├── OccurrenceCard.jsx
+│   │   ├── PrivateRoute.jsx
+│   │   ├── Sidebar.jsx
+│   │   └── StatusBadge.jsx
+│   ├── context/
+│   │   └── AuthContext.jsx
+│   ├── hooks/
+│   │   ├── useAuth.js
+│   │   └── use-mobile.js
+│   ├── lib/
+│   │   └── utils.js
+│   ├── pages/
+│   │   ├── Home/
+│   │   ├── Ocorrencias/
+│   │   ├── Atendimento/
+│   │   └── Admin/
+│   ├── services/
+│   │   ├── api.js
+│   │   ├── auth.service.js
+│   │   ├── ocorrencia.service.js
+│   │   └── maps.service.js
+│   ├── App.jsx
+│   └── main.jsx
+├── .env
+├── .env.example
+├── components.json
+├── jsconfig.json
+├── tailwind.config.js
+├── vite.config.js
+└── package.json
 ```
-
----
-
-## Padronização de Commits
-
-Seguimos a convenção de **Conventional Commits** para manter o histórico organizado[cite: 5]:
-
-- `feat`: Novas funcionalidades.
-- `fix`: Correções de bugs.
-- `docs`: Alterações em documentação.
-- `style`: Ajustes visuais e de formatação.
-- `refactor`: Melhorias na estrutura do código.
-
-Exemplo: `git commit -m "feat: implementado mapa de calor na home"`[cite: 5].
 
 ---
 
 ## Como Executar o Projeto
 
-1.  **Clone o repositório**:
-    ```bash
-    git clone https://github.com/SEU-USER/cidade-ativa.git
-    ```
-2.  **Instale as dependências**:
-    ```bash
-    npm install
-    ```
-3.  **Configure as variáveis de ambiente**:
-    Crie um arquivo `.env` na raiz e adicione sua chave do Google Maps:
-    ```env
-    VITE_GOOGLE_MAPS_KEY=sua_chave_aqui
-    ```
-4.  **Inicie o servidor de desenvolvimento**:
-    ```bash
-    npm run dev
-    ```
+1. **Clone o repositório**:
+
+   ```bash
+   git clone https://github.com/SilveStredecendent/cidade-ativa.git
+   cd cidade-ativa
+   ```
+
+2. **Instale as dependências**:
+
+   ```bash
+   npm install
+   ```
+
+3. **Configure as variáveis de ambiente**:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   Edite o `.env` e preencha sua chave do Google Maps:
+
+   ```env
+   VITE_GOOGLE_MAPS_KEY=sua_chave_aqui
+   VITE_API_BASE_URL=http://localhost:3000
+   ```
+
+4. **Inicie o servidor de desenvolvimento**:
+   ```bash
+   npm run dev
+   ```
 
 ---
 
-## Squad Cidade Ativa (PI V - 2026)
+## Fluxo de Trabalho Git
 
-- Herbert de Sousa Santos[cite: 2]
-- Lucas Adriano dos Santos[cite: 2]
-- Matheus Gabriel Souza[cite: 2]
-- Pedro Andreotti[cite: 2]
-- Rízia Laiany da Silva[cite: 2]
+O projeto usa **GitFlow simplificado** com branches por funcionalidade:
+
+| Branch             | Responsável | Módulo                           |
+| ------------------ | ----------- | -------------------------------- |
+| `feat/auth`        | —           | Login, AuthContext, PrivateRoute |
+| `feat/home`        | —           | Home + mapa de ocorrências       |
+| `feat/ocorrencias` | —           | CRUD de ocorrências              |
+| `feat/atendimento` | —           | Dashboard + Ordens de Serviço    |
+| `feat/admin`       | —           | Secretarias e equipes            |
+
+### Padrão de Commits (Conventional Commits)
+
+```bash
+feat:     nova funcionalidade
+fix:      correção de bug
+docs:     alteração em documentação
+style:    ajuste visual sem lógica
+refactor: melhoria de estrutura
+test:     testes
+```
 
 ---
 
-**Instituição**: Centro Universitário de Ourinhos
+## Squad Cidade Ativa — PI V 2026
+
+- Herbert de Sousa Santos
+- Lucas Adriano dos Santos
+- Matheus Gabriel Souza
+- Pedro Andreotti
+- Rízia Laiany da Silva
+
+---
+
+**Instituição**: Centro Universitário de Ourinhos (Unifio)
 **Curso**: Engenharia de Software
-
-```
-
-```
