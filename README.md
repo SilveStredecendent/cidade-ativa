@@ -91,8 +91,8 @@ Exemplo: `git commit -m "feat: implementado mapa de calor na home"`[cite: 5].
 
 ---
 
-**Instituição**: Centro Universitário de Ourinhos (Unifio)[cite: 2]  
-**Curso**: Engenharia de Software[cite: 2]
+**Instituição**: Centro Universitário de Ourinhos
+**Curso**: Engenharia de Software
 
 ```
 
