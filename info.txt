@@ -1,0 +1,12 @@
+// Hook público — use este em todos os componentes
+// Exemplo de uso:
+//   const { user, isAuthenticated, login, logout, hasPermission } = useAuth()
+//
+// Propriedades disponíveis:
+//   user            → { nome, email, perfil, ... } ou null
+//   token           → string JWT ou null
+//   isAuthenticated → boolean
+//   loading         → boolean (durante chamadas de auth)
+//   login(user, token) → salva sessão
+//   logout()           → limpa sessão e redireciona
+//   hasPermission(perfil | perfil[]) → boolean
