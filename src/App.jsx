@@ -8,11 +8,7 @@ import OcorrenciasPage from "@/pages/Ocorrencias";
 import NovaOcorrencia from "@/pages/Ocorrencias/NovaOcorrencia";
 import Atendimento from "@/pages/Atendimento";
 import Admin from "@/pages/Admin";
-
-// Página de login (pública)
-function Login() {
-  return <div style={{ padding: "2rem" }}>Tela de Login — em breve</div>;
-}
+import Login from "@/pages/Login";
 
 function App() {
   return (
