@@ -15,7 +15,6 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Home, MapPin, ClipboardList, LayoutDashboard, ShieldCheck, Bell, Settings, LogOut } from "lucide-react";
 
-// Itens de navegação por perfil
 const NAV_ITEMS = {
   cidadao: [
     { label: "Início", icon: Home, to: "/home" },
@@ -100,7 +99,7 @@ export function AppSidebar() {
         </div>
       </SidebarHeader>
 
-      <SidebarSeparator />
+      <SidebarSeparator style={{ margin: "5px 0" }} />
 
       {/* Navegação */}
       <SidebarContent style={{ padding: "8px" }}>
@@ -124,7 +123,7 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarSeparator />
+      <SidebarSeparator style={{ margin: "5px 0" }} />
 
       {/* Footer */}
       <SidebarFooter style={{ padding: "12px" }}>
@@ -177,7 +176,7 @@ export function AppSidebar() {
 
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton onClick={() => navigate("/perfil")} style={{ gap: "10px" }}>
+            <SidebarMenuButton onClick={() => navigate("/configuracoes")} style={{ gap: "10px" }}>
               <Settings style={{ width: "14px", height: "14px" }} />
               <span style={{ fontSize: "13px" }}>Configurações</span>
             </SidebarMenuButton>

@@ -5,8 +5,10 @@ import { AppSidebar } from "@/components/Sidebar";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import MapView from "@/components/MapView";
 import { MapPin, AlertTriangle, Wrench, Droplets, Trees, Plus } from "lucide-react";
+import MapView from "@/components/MapView";
+import { OccurrenceCard } from "@/components/OccurrenceCard";
+import { StatusBadge } from "@/components/StatusBadge";
 
 const CATEGORIAS = [
   { id: "todos", label: "Todos", icon: null },
@@ -122,6 +124,7 @@ export default function Home() {
               <p style={{ fontSize: "12px", color: "var(--color-text-tertiary)", margin: 0 }}>Ourinhos — SP</p>
             </div>
           </div>
+
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <div
               style={{
@@ -217,65 +220,56 @@ export default function Home() {
               <div
                 style={{
                   position: "absolute",
-                  bottom: "16px",
+                  bottom: "24px",
                   left: "50%",
                   transform: "translateX(-50%)",
-                  background: "var(--color-background-primary)",
-                  border: ".5px solid var(--color-border-tertiary)",
-                  borderRadius: "var(--border-radius-lg)",
-                  padding: "12px 16px",
-                  minWidth: "260px",
+                  background: "white" /* <-- A MÁGICA AQUI: Fundo branco sólido! */,
+                  border: "1px solid #e2e8f0",
+                  borderRadius: "12px",
+                  padding: "16px",
+                  minWidth: "280px",
                   maxWidth: "320px",
-                  boxShadow: "0 4px 20px rgba(0,0,0,0.12)",
+                  boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.15)" /* Sombra para destacar do mapa */,
                   zIndex: 10,
                 }}
               >
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                  <p style={{ fontSize: "14px", fontWeight: "500", color: "var(--color-text-primary)", margin: "0 0 4px" }}>
-                    {ocorrenciaAtiva.titulo}
-                  </p>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px" }}>
+                  <p style={{ fontSize: "14px", fontWeight: "700", color: "#0f172a", margin: 0 }}>{ocorrenciaAtiva.titulo}</p>
                   <button
                     onClick={() => setOcorrenciaAtiva(null)}
                     style={{
                       background: "none",
                       border: "none",
                       cursor: "pointer",
-                      color: "var(--color-text-tertiary)",
-                      fontSize: "18px",
-                      padding: 0,
-                      lineHeight: 1,
+                      color: "#94a3b8",
+                      fontSize: "20px",
+                      padding: "0",
+                      lineHeight: "1",
                     }}
                   >
                     ×
                   </button>
                 </div>
+
                 <p
                   style={{
                     fontSize: "12px",
-                    color: "var(--color-text-secondary)",
-                    margin: "0 0 8px",
+                    color: "#64748b",
+                    margin: "0 0 12px",
                     display: "flex",
                     alignItems: "center",
-                    gap: "4px",
+                    gap: "6px",
                   }}
                 >
-                  <MapPin style={{ width: "11px", height: "11px" }} />
+                  <MapPin style={{ width: "14px", height: "14px" }} />
                   {ocorrenciaAtiva.local}
                 </p>
-                <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
-                  <span
-                    style={{
-                      fontSize: "11px",
-                      fontWeight: "500",
-                      padding: "2px 8px",
-                      borderRadius: "999px",
-                      background: STATUS_COLOR[ocorrenciaAtiva.status]?.bg,
-                      color: STATUS_COLOR[ocorrenciaAtiva.status]?.text,
-                    }}
-                  >
-                    {ocorrenciaAtiva.status}
-                  </span>
-                  <span style={{ fontSize: "11px", color: URGENCIA_COLOR[ocorrenciaAtiva.urgencia], fontWeight: "500" }}>
+
+                <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                  {/* Já usando nosso componente padronizado de cor! */}
+                  <StatusBadge status={ocorrenciaAtiva.status} />
+
+                  <span style={{ fontSize: "11px", color: URGENCIA_COLOR[ocorrenciaAtiva.urgencia], fontWeight: "800", textTransform: "uppercase" }}>
                     Urgência {ocorrenciaAtiva.urgencia}
                   </span>
                 </div>
@@ -309,76 +303,10 @@ export default function Home() {
               <Badge variant="secondary">{ocorrenciasFiltradas.length}</Badge>
             </div>
 
-            <div style={{ flex: 1, overflowY: "auto", padding: "8px" }}>
+            {/* Feed lateral */}
+            <div style={{ flex: 1, overflowY: "auto", padding: "12px" }}>
               {ocorrenciasFiltradas.map((oc) => (
-                <button
-                  key={oc.id}
-                  onClick={() => setOcorrenciaAtiva(oc)}
-                  style={{
-                    display: "block",
-                    width: "100%",
-                    textAlign: "left",
-                    background: ocorrenciaAtiva?.id === oc.id ? "var(--color-background-secondary)" : "transparent",
-                    border: ".5px solid " + (ocorrenciaAtiva?.id === oc.id ? "var(--color-border-secondary)" : "transparent"),
-                    borderRadius: "var(--border-radius-md)",
-                    padding: "10px 12px",
-                    cursor: "pointer",
-                    marginBottom: "4px",
-                    transition: "all .15s",
-                  }}
-                  onMouseEnter={(e) => {
-                    if (ocorrenciaAtiva?.id !== oc.id) e.currentTarget.style.background = "var(--color-background-secondary)";
-                  }}
-                  onMouseLeave={(e) => {
-                    if (ocorrenciaAtiva?.id !== oc.id) e.currentTarget.style.background = "transparent";
-                  }}
-                >
-                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "4px" }}>
-                    <p style={{ fontSize: "13px", fontWeight: "500", color: "var(--color-text-primary)", margin: 0 }}>{oc.titulo}</p>
-                    <span
-                      style={{
-                        fontSize: "11px",
-                        fontWeight: "700",
-                        color: URGENCIA_COLOR[oc.urgencia],
-                        textTransform: "uppercase",
-                        flexShrink: 0,
-                        marginLeft: "4px",
-                      }}
-                    >
-                      {oc.urgencia}
-                    </span>
-                  </div>
-                  <p
-                    style={{
-                      fontSize: "12px",
-                      color: "var(--color-text-secondary)",
-                      margin: "0 0 6px",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "4px",
-                    }}
-                  >
-                    <MapPin style={{ width: "11px", height: "11px" }} />
-                    {oc.local}
-                  </p>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <span
-                      style={{
-                        fontSize: "11px",
-                        fontWeight: "500",
-                        padding: "2px 6px",
-                        borderRadius: "999px",
-                        background: STATUS_COLOR[oc.status]?.bg,
-                        color: STATUS_COLOR[oc.status]?.text,
-                      }}
-                    >
-                      {oc.status}
-                    </span>
-                    <span style={{ fontSize: "11px", color: "var(--color-text-tertiary)" }}>
-                      {oc.confirmacoes} confirmações · {oc.tempo}
-                    </span>
-                  </div>
-                </button>
+                <OccurrenceCard key={oc.id} ocorrencia={oc} isActive={ocorrenciaAtiva?.id === oc.id} onClick={setOcorrenciaAtiva} />
               ))}
             </div>
           </div>

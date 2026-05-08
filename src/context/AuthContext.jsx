@@ -1,6 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
 
-// Chaves usadas no localStorage
 const TOKEN_KEY = "@cidadeativa:token";
 const USER_KEY = "@cidadeativa:user";
 
@@ -18,7 +17,6 @@ export function AuthProvider({ children }) {
 
   const [loading, setLoading] = useState(false);
 
-  // Persiste no localStorage sempre que mudar
   useEffect(() => {
     if (token) {
       localStorage.setItem(TOKEN_KEY, token);
@@ -72,7 +70,6 @@ export function AuthProvider({ children }) {
   );
 }
 
-// Hook interno — usado pelo useAuth.js
 export function useAuthContext() {
   const context = useContext(AuthContext);
   if (!context) {

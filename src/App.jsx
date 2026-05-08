@@ -8,6 +8,9 @@ import NovaOcorrencia from "@/pages/Ocorrencias/NovaOcorrencia";
 import Atendimento from "@/pages/Atendimento";
 import Admin from "@/pages/Admin";
 import Login from "@/pages/Login";
+import NotificacoesPage from "./pages/Notificacoes";
+import ConfiguracoesPage from "./pages/Configuracoes";
+import DashboardGestao from "@/pages/Dashboard";
 
 function LayoutProtegido({ children }) {
   return (
@@ -26,8 +29,10 @@ function LayoutProtegido({ children }) {
 function App() {
   return (
     <Routes>
+      {/* Rota Pública */}
       <Route path="/login" element={<Login />} />
 
+      {/* Rotas Protegidas - Cidadão */}
       <Route
         path="/home"
         element={
@@ -62,6 +67,29 @@ function App() {
       />
 
       <Route
+        path="/notificacoes"
+        element={
+          <PrivateRoute>
+            <LayoutProtegido>
+              <NotificacoesPage />
+            </LayoutProtegido>
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path="/configuracoes"
+        element={
+          <PrivateRoute>
+            <LayoutProtegido>
+              <ConfiguracoesPage />
+            </LayoutProtegido>
+          </PrivateRoute>
+        }
+      />
+
+      {/* Rotas Protegidas - Atendimento (Perfis Específicos) */}
+      <Route
         path="/atendimento"
         element={
           <PrivateRoute perfisPermitidos={["atendente", "gestor", "administrador"]}>
@@ -72,6 +100,7 @@ function App() {
         }
       />
 
+      {/* Rotas Protegidas - Admin */}
       <Route
         path="/admin"
         element={
@@ -82,7 +111,16 @@ function App() {
           </PrivateRoute>
         }
       />
+      <Route
+        path="/dashboard"
+        element={
+          <PrivateRoute perfisPermitidos={["gestor", "administrador"]}>
+            <DashboardGestao />
+          </PrivateRoute>
+        }
+      />
 
+      {/* Redirecionamentos e Erros */}
       <Route path="/" element={<Navigate to="/home" replace />} />
       <Route path="*" element={<div style={{ padding: "2rem" }}>Página não encontrada</div>} />
     </Routes>
