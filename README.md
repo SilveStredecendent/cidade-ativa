@@ -46,12 +46,9 @@ cidade-ativa/
 │   ├── assets/
 │   ├── components/
 │   │   ├── ui/
+│   │   │   ├── badge.jsx
 │   │   │   ├── button.jsx
 │   │   │   ├── card.jsx
-│   │   │   ├── badge.jsx
-│   │   │   ├── dialog.jsx
-│   │   │   ├── input.jsx
-│   │   │   ├── select.jsx
 │   │   │   ├── sidebar.jsx
 │   │   │   ├── table.jsx
 │   │   │   └── ...
@@ -68,21 +65,20 @@ cidade-ativa/
 │   ├── lib/
 │   │   └── utils.js
 │   ├── pages/
-│   │   ├── Home/
-│   │   ├── Ocorrencias/
+│   │   ├── Admin/
 │   │   ├── Atendimento/
-│   │   └── Admin/
+│   │   ├── Configuracoes/
+│   │   ├── Dashboard/
+│   │   ├── Home/
+│   │   ├── Login/
+│   │   ├── Notificacoes/
+│   │   └── Ocorrencias/
 │   ├── services/
 │   │   ├── api.js
 │   │   ├── auth.service.js
-│   │   ├── ocorrencia.service.js
 │   │   └── maps.service.js
 │   ├── App.jsx
 │   └── main.jsx
-├── .env
-├── .env.example
-├── components.json
-├── jsconfig.json
 ├── tailwind.config.js
 ├── vite.config.js
 └── package.json
