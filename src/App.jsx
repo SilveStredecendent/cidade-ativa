@@ -2,7 +2,6 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { PrivateRoute } from "@/components/PrivateRoute";
 
-// Páginas
 import Home from "@/pages/Home";
 import OcorrenciasPage from "@/pages/Ocorrencias";
 import NovaOcorrencia from "@/pages/Ocorrencias/NovaOcorrencia";
@@ -10,68 +9,83 @@ import Atendimento from "@/pages/Atendimento";
 import Admin from "@/pages/Admin";
 import Login from "@/pages/Login";
 
+function LayoutProtegido({ children }) {
+  return (
+    <SidebarProvider
+      style={{
+        height: "100vh",
+        overflow: "hidden",
+        "--sidebar-width": "220px",
+      }}
+    >
+      {children}
+    </SidebarProvider>
+  );
+}
+
 function App() {
   return (
-    <SidebarProvider>
-      <Routes>
-        {/* Rota pública */}
-        <Route path="/login" element={<Login />} />
+    <Routes>
+      <Route path="/login" element={<Login />} />
 
-        {/* Rotas protegidas — qualquer usuário logado */}
-        <Route
-          path="/home"
-          element={
-            <PrivateRoute>
+      <Route
+        path="/home"
+        element={
+          <PrivateRoute>
+            <LayoutProtegido>
               <Home />
-            </PrivateRoute>
-          }
-        />
+            </LayoutProtegido>
+          </PrivateRoute>
+        }
+      />
 
-        <Route
-          path="/ocorrencias"
-          element={
-            <PrivateRoute>
+      <Route
+        path="/ocorrencias"
+        element={
+          <PrivateRoute>
+            <LayoutProtegido>
               <OcorrenciasPage />
-            </PrivateRoute>
-          }
-        />
+            </LayoutProtegido>
+          </PrivateRoute>
+        }
+      />
 
-        <Route
-          path="/ocorrencias/nova"
-          element={
-            <PrivateRoute>
+      <Route
+        path="/ocorrencias/nova"
+        element={
+          <PrivateRoute>
+            <LayoutProtegido>
               <NovaOcorrencia />
-            </PrivateRoute>
-          }
-        />
+            </LayoutProtegido>
+          </PrivateRoute>
+        }
+      />
 
-        {/* Rotas protegidas — apenas atendente, gestor e admin */}
-        <Route
-          path="/atendimento"
-          element={
-            <PrivateRoute perfisPermitidos={["atendente", "gestor", "administrador"]}>
+      <Route
+        path="/atendimento"
+        element={
+          <PrivateRoute perfisPermitidos={["atendente", "gestor", "administrador"]}>
+            <LayoutProtegido>
               <Atendimento />
-            </PrivateRoute>
-          }
-        />
+            </LayoutProtegido>
+          </PrivateRoute>
+        }
+      />
 
-        {/* Rota protegida — apenas administrador */}
-        <Route
-          path="/admin"
-          element={
-            <PrivateRoute perfisPermitidos={["administrador"]}>
+      <Route
+        path="/admin"
+        element={
+          <PrivateRoute perfisPermitidos={["administrador"]}>
+            <LayoutProtegido>
               <Admin />
-            </PrivateRoute>
-          }
-        />
+            </LayoutProtegido>
+          </PrivateRoute>
+        }
+      />
 
-        {/* Redireciona raiz para home */}
-        <Route path="/" element={<Navigate to="/home" replace />} />
-
-        {/* Rota 404 */}
-        <Route path="*" element={<div style={{ padding: "2rem" }}>Página não encontrada</div>} />
-      </Routes>
-    </SidebarProvider>
+      <Route path="/" element={<Navigate to="/home" replace />} />
+      <Route path="*" element={<div style={{ padding: "2rem" }}>Página não encontrada</div>} />
+    </Routes>
   );
 }
 
