@@ -88,7 +88,6 @@ function App() {
         }
       />
 
-      {/* Rotas Protegidas - Atendimento (Perfis Específicos) */}
       <Route
         path="/atendimento"
         element={
@@ -100,7 +99,6 @@ function App() {
         }
       />
 
-      {/* Rotas Protegidas - Admin */}
       <Route
         path="/admin"
         element={
@@ -115,7 +113,9 @@ function App() {
         path="/dashboard"
         element={
           <PrivateRoute perfisPermitidos={["gestor", "administrador"]}>
-            <DashboardGestao />
+            <LayoutProtegido>
+              <DashboardGestao />
+            </LayoutProtegido>
           </PrivateRoute>
         }
       />
