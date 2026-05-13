@@ -32,7 +32,6 @@ export default function NotificacoesPage() {
           overflow: "hidden",
         }}
       >
-        {/* Header Fixo */}
         <header
           style={{
             display: "flex",
@@ -55,7 +54,6 @@ export default function NotificacoesPage() {
           </div>
         </header>
 
-        {/* Área de Rolagem do Conteúdo */}
         <div style={{ flex: 1, overflowY: "auto", padding: "24px" }}>
           <div style={{ maxWidth: "720px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "12px" }}>
             {NOTIFICACOES_MOCK.map((n) => (
@@ -74,7 +72,6 @@ export default function NotificacoesPage() {
                   boxShadow: n.lida ? "none" : "0 1px 2px rgba(0,0,0,0.05)",
                 }}
               >
-                {/* Ícone da Notificação */}
                 <div
                   style={{
                     width: "40px",
@@ -93,7 +90,6 @@ export default function NotificacoesPage() {
                   {n.tipo === "alerta" && <AlertTriangle style={{ width: "20px", height: "20px" }} />}
                 </div>
 
-                {/* Texto */}
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "4px" }}>
                     <p style={{ fontSize: "13px", fontWeight: "600", color: "#0f172a", margin: 0 }}>{n.titulo}</p>
@@ -102,7 +98,6 @@ export default function NotificacoesPage() {
                   <p style={{ fontSize: "12px", color: "#64748b", margin: 0, lineHeight: "1.5" }}>{n.msg}</p>
                 </div>
 
-                {/* Botão Excluir */}
                 <button
                   style={{
                     background: "none",

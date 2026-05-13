@@ -29,36 +29,18 @@ export default function NovaOcorrencia() {
 
     setLoading(true);
 
-    // Mock: Simula o envio de dados para um servidor (demora 800ms)
     await new Promise((resolve) => setTimeout(resolve, 800));
 
-    alert("Ocorrência registrada com sucesso! (Modo de demonstração)");
-    navigate("/ocorrencias"); // Volta para a tabela
+    alert("Ocorrência registrada com sucesso!");
+    navigate("/ocorrencias");
     setLoading(false);
   }
 
   return (
-    <div
-      style={{
-        display: "flex",
-        width: "100%",
-        height: "100vh",
-        overflow: "hidden",
-        background: "#f8fafc",
-      }}
-    >
+    <div style={{ display: "flex", width: "100%", height: "100vh", overflow: "hidden", background: "#f8fafc" }}>
       <AppSidebar />
 
-      <main
-        style={{
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          minWidth: 0,
-          overflow: "hidden",
-        }}
-      >
-        {/* Header */}
+      <main style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0, overflow: "hidden" }}>
         <header
           style={{
             display: "flex",
@@ -79,31 +61,14 @@ export default function NovaOcorrencia() {
           <h1 style={{ fontSize: "14px", fontWeight: "600", margin: 0 }}>Registrar Ocorrência</h1>
         </header>
 
-        {/* Divisão da Tela: Formulário (Esquerda) e Mapa (Direita) */}
-        <div
-          style={{
-            flex: 1,
-            display: "flex",
-            minHeight: 0,
-            overflow: "hidden",
-          }}
-        >
-          {/* Coluna do Formulário */}
+        <div style={{ flex: 1, display: "flex", minHeight: 0, overflow: "hidden" }}>
           <div
-            style={{
-              width: "420px",
-              flexShrink: 0,
-              overflowY: "auto",
-              padding: "32px 28px",
-              background: "white",
-              borderRight: ".5px solid #e2e8f0",
-            }}
+            style={{ width: "420px", flexShrink: 0, overflowY: "auto", padding: "32px 28px", background: "white", borderRight: ".5px solid #e2e8f0" }}
           >
             <h2 style={{ fontSize: "18px", fontWeight: "700", margin: "0 0 4px", color: "#0f172a" }}>Detalhes do Problema</h2>
             <p style={{ fontSize: "13px", color: "#64748b", margin: "0 0 28px" }}>Seu relato ajuda a prefeitura a priorizar o atendimento.</p>
 
             <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-              {/* Título */}
               <div>
                 <label
                   style={{ fontSize: "11px", fontWeight: "700", color: "#64748b", textTransform: "uppercase", display: "block", marginBottom: "6px" }}
@@ -118,7 +83,6 @@ export default function NovaOcorrencia() {
                 />
               </div>
 
-              {/* Categoria */}
               <div>
                 <label
                   style={{ fontSize: "11px", fontWeight: "700", color: "#64748b", textTransform: "uppercase", display: "block", marginBottom: "6px" }}
@@ -151,7 +115,6 @@ export default function NovaOcorrencia() {
                 </select>
               </div>
 
-              {/* Descrição */}
               <div>
                 <label
                   style={{ fontSize: "11px", fontWeight: "700", color: "#64748b", textTransform: "uppercase", display: "block", marginBottom: "6px" }}
@@ -167,7 +130,6 @@ export default function NovaOcorrencia() {
                 />
               </div>
 
-              {/* Foto (Mock) */}
               <div>
                 <label
                   style={{ fontSize: "11px", fontWeight: "700", color: "#64748b", textTransform: "uppercase", display: "block", marginBottom: "6px" }}
@@ -181,18 +143,14 @@ export default function NovaOcorrencia() {
                     padding: "24px",
                     textAlign: "center",
                     cursor: "pointer",
-                    transition: "all .15s",
                     background: "#f8fafc",
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.borderColor = "#93c5fd")}
-                  onMouseLeave={(e) => (e.currentTarget.style.borderColor = "#e2e8f0")}
                 >
                   <UploadCloud style={{ width: "24px", height: "24px", color: "#94a3b8", margin: "0 auto 8px" }} />
                   <p style={{ fontSize: "12px", color: "#64748b", margin: 0 }}>Clique para enviar imagem</p>
                 </div>
               </div>
 
-              {/* Status de Seleção do Mapa */}
               <div
                 style={{
                   padding: "10px 14px",
@@ -218,17 +176,18 @@ export default function NovaOcorrencia() {
                 )}
               </div>
 
-              {/* Botão de Envio */}
               <Button type="submit" disabled={loading} style={{ height: "44px", fontWeight: "600", fontSize: "14px", marginTop: "8px" }}>
                 {loading ? "Enviando..." : "Registrar Ocorrência"}
               </Button>
             </form>
           </div>
 
-          {/* Coluna do Mapa */}
           <div style={{ flex: 1, position: "relative", minWidth: 0, minHeight: 0 }}>
-            {/* O componente MapView renderiza o Google Maps e devolve as coordenadas ao clicar */}
-            <MapView selectedLocation={coords} onMapClick={(c) => setCoords(c)} />
+            <MapView
+              onMapClick={(novasCoordenadas) => {
+                setCoords({ lat: novasCoordenadas[0], lng: novasCoordenadas[1] });
+              }}
+            />
           </div>
         </div>
       </main>

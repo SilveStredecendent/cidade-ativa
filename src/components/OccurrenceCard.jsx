@@ -3,9 +3,9 @@ import { MapPin } from "lucide-react";
 import { StatusBadge } from "./StatusBadge";
 
 const URGENCIA_COLOR = {
-  alta: "#ef4444", // Vermelho
-  media: "#f59e0b", // Amarelo/Laranja
-  baixa: "#64748b", // Cinza
+  alta: "#ef4444",
+  media: "#f59e0b",
+  baixa: "#64748b",
 };
 
 export function OccurrenceCard({ ocorrencia, onClick, isActive }) {

@@ -71,7 +71,6 @@ export function AppSidebar() {
 
   return (
     <Sidebar>
-      {/* Header */}
       <SidebarHeader style={{ padding: "16px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
           <div
@@ -101,7 +100,6 @@ export function AppSidebar() {
 
       <SidebarSeparator style={{ margin: "5px 0" }} />
 
-      {/* Navegação */}
       <SidebarContent style={{ padding: "8px" }}>
         <SidebarGroup>
           <SidebarGroupLabel style={{ fontSize: "10px", letterSpacing: "0.08em" }}>Navegação</SidebarGroupLabel>
@@ -125,7 +123,6 @@ export function AppSidebar() {
 
       <SidebarSeparator style={{ margin: "5px 0" }} />
 
-      {/* Footer */}
       <SidebarFooter style={{ padding: "12px" }}>
         <div
           style={{
@@ -153,9 +150,7 @@ export function AppSidebar() {
               fontWeight: "600",
               color: "var(--color-text-secondary)",
             }}
-          >
-            {inicial}
-          </div>
+          ></div>
           <div style={{ overflow: "hidden", flex: 1 }}>
             <p
               style={{

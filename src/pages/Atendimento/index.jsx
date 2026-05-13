@@ -30,7 +30,6 @@ export default function Atendimento() {
 
         <div style={{ flex: 1, overflowY: "auto", padding: "24px" }}>
           <div style={{ maxWidth: "1200px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "24px" }}>
-            {/* Cards de Métricas */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "16px" }}>
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -64,7 +63,6 @@ export default function Atendimento() {
               </Card>
             </div>
 
-            {/* Tabela de Ordens de Serviço (OS) */}
             <Card>
               <CardHeader>
                 <CardTitle className="text-sm font-bold">Fila de Trabalho (OS)</CardTitle>

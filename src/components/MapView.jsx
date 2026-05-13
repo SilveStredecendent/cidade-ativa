@@ -4,7 +4,6 @@ import { LocateFixed } from "lucide-react";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
-// Ícones padrão do Leaflet (para as ocorrências)
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 
@@ -16,9 +15,7 @@ const DefaultIcon = L.icon({
 });
 L.Marker.prototype.options.icon = DefaultIcon;
 
-// CONFIGURAÇÃO DO NOVO ÍCONE: Pin Azul Especial para o Usuário
 const UserIcon = L.icon({
-  // Usando uma imagem online de pin azul para teste fácil (pode trocar por asset local)
   iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png",
   shadowUrl: markerShadow,
   iconSize: [25, 41],
@@ -26,7 +23,6 @@ const UserIcon = L.icon({
   popupAnchor: [1, -34],
 });
 
-// Subcomponente: Botão de Localização (apenas envia o comando)
 function LocationButton({ onLocationFound }) {
   const map = useMap();
 
@@ -34,7 +30,6 @@ function LocationButton({ onLocationFound }) {
     map.locate({ setView: true, maxZoom: 16 });
   };
 
-  // Evento disparado quando a localização é encontrada
   useMapEvents({
     locationfound(e) {
       console.log("Sua localização:", e.latlng);
@@ -51,7 +46,7 @@ function LocationButton({ onLocationFound }) {
       title="Minha Localização"
       style={{
         position: "absolute",
-        top: "80px", // Abaixo dos botões de Zoom (+/-)
+        top: "80px",
         left: "10px",
         zIndex: 1000,
         background: "white",
@@ -74,7 +69,6 @@ function LocationButton({ onLocationFound }) {
   );
 }
 
-// Componente para capturar cliques no mapa (já tínhamos)
 function ClickHandler({ onMapClick }) {
   useMapEvents({
     click(e) {
@@ -85,7 +79,6 @@ function ClickHandler({ onMapClick }) {
 }
 
 export default function MapView({ center = [-22.97, -49.87], zoom = 14, occurrences = [], onMapClick }) {
-  // Estado para armazenar a posição do usuário ("Você está aqui")
   const [userPosition, setUserPosition] = useState(null);
 
   return (
@@ -96,19 +89,16 @@ export default function MapView({ center = [-22.97, -49.87], zoom = 14, occurren
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-        {/* Adicionando o botão de localização e passando o setSetter */}
         <LocationButton onLocationFound={setUserPosition} />
 
         {onMapClick && <ClickHandler onMapClick={onMapClick} />}
 
-        {/* RENDERIZAÇÃO DO PIN DO USUÁRIO conditionally */}
         {userPosition && (
           <Marker position={userPosition} icon={UserIcon}>
             <Popup>Você está aqui!</Popup>
           </Marker>
         )}
 
-        {/* Renderiza marcadores das ocorrências existentes */}
         {occurrences.map((oc) => {
           const lat = oc.lat !== undefined ? oc.lat : oc.latitude;
           const lng = oc.lng !== undefined ? oc.lng : oc.longitude;

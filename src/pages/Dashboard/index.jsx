@@ -9,7 +9,6 @@ export default function DashboardGestao() {
     <div style={{ display: "flex", width: "100%", height: "100vh", overflow: "hidden", background: "#f8fafc" }}>
       <AppSidebar />
       <main style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0, overflow: "hidden" }}>
-        {/* Header */}
         <header
           style={{
             display: "flex",
@@ -26,7 +25,6 @@ export default function DashboardGestao() {
           <h1 style={{ fontSize: "14px", fontWeight: "600", margin: 0, color: "#0f172a" }}>Visão Geral (Dashboard)</h1>
         </header>
 
-        {/* Conteúdo */}
         <div style={{ flex: 1, overflowY: "auto", padding: "24px" }}>
           <div style={{ maxWidth: "1000px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "24px" }}>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "16px" }}>

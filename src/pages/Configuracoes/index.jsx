@@ -31,7 +31,6 @@ export default function ConfiguracoesPage() {
           overflow: "hidden",
         }}
       >
-        {/* Header Fixo */}
         <header
           style={{
             display: "flex",
@@ -49,10 +48,8 @@ export default function ConfiguracoesPage() {
           <h1 style={{ fontSize: "14px", fontWeight: "600", margin: 0, color: "#0f172a" }}>Configurações</h1>
         </header>
 
-        {/* Área de Rolagem do Conteúdo */}
         <div style={{ flex: 1, overflowY: "auto", padding: "24px" }}>
           <div style={{ maxWidth: "600px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "20px" }}>
-            {/* Card de Perfil */}
             <Card style={{ border: ".5px solid #e2e8f0", boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }}>
               <CardHeader className="border-b bg-slate-50/50">
                 <CardTitle className="text-sm flex items-center gap-2 text-slate-800">
@@ -89,7 +86,6 @@ export default function ConfiguracoesPage() {
               </CardContent>
             </Card>
 
-            {/* Card de Segurança */}
             <Card style={{ border: ".5px solid #e2e8f0", boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }}>
               <CardHeader className="border-b bg-slate-50/50">
                 <CardTitle className="text-sm flex items-center gap-2 text-slate-800">
@@ -104,7 +100,6 @@ export default function ConfiguracoesPage() {
               </CardContent>
             </Card>
 
-            {/* Rodapé da Tela */}
             <div style={{ textAlign: "center", marginTop: "16px" }}>
               <p style={{ fontSize: "10px", color: "#cbd5e1", textTransform: "uppercase", fontWeight: "700", letterSpacing: "0.05em", margin: 0 }}>
                 Cidade Ativa v1.0.0 // Ourinhos-SP

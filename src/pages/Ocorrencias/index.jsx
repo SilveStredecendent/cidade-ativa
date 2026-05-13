@@ -27,7 +27,6 @@ export default function OcorrenciasPage() {
   const [busca, setBusca] = useState("");
   const [filtroStatus, setFiltroStatus] = useState("todos");
 
-  // Lógica de filtro combinada (Busca por texto + Botões de Status)
   const filtradas = MINHAS_OCORRENCIAS.filter((oc) => {
     const buscaOk = oc.titulo.toLowerCase().includes(busca.toLowerCase()) || oc.id.includes(busca);
     const statusOk =
@@ -47,7 +46,6 @@ export default function OcorrenciasPage() {
         background: "#f8fafc",
       }}
     >
-      {/* Sidebar importada manualmente para garantir o layout */}
       <AppSidebar />
 
       <main
@@ -59,7 +57,6 @@ export default function OcorrenciasPage() {
           overflow: "hidden",
         }}
       >
-        {/* Header Fixo */}
         <header
           style={{
             display: "flex",
@@ -82,10 +79,8 @@ export default function OcorrenciasPage() {
           </Button>
         </header>
 
-        {/* Área de Rolagem do Conteúdo */}
         <div style={{ flex: 1, overflowY: "auto", padding: "24px" }}>
           <div style={{ maxWidth: "900px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "16px" }}>
-            {/* Barra de Busca e Filtros */}
             <div
               style={{
                 display: "flex",
@@ -146,7 +141,6 @@ export default function OcorrenciasPage() {
               </div>
             </div>
 
-            {/* Tabela de Ocorrências */}
             <div style={{ background: "white", borderRadius: "12px", border: ".5px solid #e2e8f0", overflow: "hidden" }}>
               <Table>
                 <TableHeader className="bg-slate-50/80">

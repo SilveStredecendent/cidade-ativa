@@ -29,10 +29,8 @@ function LayoutProtegido({ children }) {
 function App() {
   return (
     <Routes>
-      {/* Rota Pública */}
       <Route path="/login" element={<Login />} />
 
-      {/* Rotas Protegidas - Cidadão */}
       <Route
         path="/home"
         element={

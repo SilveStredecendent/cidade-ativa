@@ -91,10 +91,8 @@ export default function Home() {
         background: "var(--color-background-tertiary)",
       }}
     >
-      {/* Sidebar */}
       <AppSidebar />
 
-      {/* Área principal — flex coluna ocupando o resto */}
       <main
         style={{
           flex: 1,
@@ -104,7 +102,6 @@ export default function Home() {
           overflow: "hidden",
         }}
       >
-        {/* Header */}
         <header
           style={{
             display: "flex",
@@ -149,7 +146,6 @@ export default function Home() {
           </div>
         </header>
 
-        {/* Filtros */}
         <div
           style={{
             display: "flex",
@@ -187,7 +183,6 @@ export default function Home() {
           ))}
         </div>
 
-        {/* Conteúdo: mapa + feed — ocupa todo espaço restante */}
         <div
           style={{
             flex: 1,
@@ -196,7 +191,6 @@ export default function Home() {
             overflow: "hidden",
           }}
         >
-          {/* Mapa */}
           <div
             style={{
               flex: 1,
@@ -211,7 +205,6 @@ export default function Home() {
               activeId={ocorrenciaAtiva?.id}
             />
 
-            {/* Popup de ocorrência clicada */}
             {ocorrenciaAtiva && (
               <div
                 style={{
@@ -262,7 +255,6 @@ export default function Home() {
                 </p>
 
                 <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-                  {/* Já usando nosso componente padronizado de cor! */}
                   <StatusBadge status={ocorrenciaAtiva.status} />
 
                   <span style={{ fontSize: "11px", color: URGENCIA_COLOR[ocorrenciaAtiva.urgencia], fontWeight: "800", textTransform: "uppercase" }}>
@@ -273,7 +265,6 @@ export default function Home() {
             )}
           </div>
 
-          {/* Feed lateral */}
           <div
             style={{
               width: "300px",
@@ -299,7 +290,6 @@ export default function Home() {
               <Badge variant="secondary">{ocorrenciasFiltradas.length}</Badge>
             </div>
 
-            {/* Feed lateral */}
             <div style={{ flex: 1, overflowY: "auto", padding: "12px" }}>
               {ocorrenciasFiltradas.map((oc) => (
                 <OccurrenceCard key={oc.id} ocorrencia={oc} isActive={ocorrenciaAtiva?.id === oc.id} onClick={setOcorrenciaAtiva} />

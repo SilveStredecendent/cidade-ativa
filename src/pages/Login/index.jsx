@@ -7,7 +7,6 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
 // Mock de usuários para testar os 4 perfis sem backend
-// Remova isso quando o auth.service.js estiver pronto
 const MOCK_USERS = {
   "cidadao@teste.com": { nome: "João Silva", perfil: "cidadao", email: "cidadao@teste.com" },
   "atendente@teste.com": { nome: "Ana Costa", perfil: "atendente", email: "atendente@teste.com" },
@@ -25,7 +24,6 @@ export default function Login() {
   const [erro, setErro] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Rotas de redirecionamento por perfil após login
   const REDIRECT = {
     cidadao: "/home",
     atendente: "/atendimento",
@@ -38,7 +36,6 @@ export default function Login() {
     setErro("");
     setLoading(true);
 
-    // Simula delay de rede
     await new Promise((r) => setTimeout(r, 800));
 
     const user = MOCK_USERS[email.toLowerCase()];
@@ -49,10 +46,8 @@ export default function Login() {
       return;
     }
 
-    // Salva no AuthContext (token mock por enquanto)
     login(user, "mock-jwt-token-" + user.perfil);
 
-    // Redireciona conforme o perfil
     navigate(REDIRECT[user.perfil] || "/home");
   }
 
@@ -100,7 +95,6 @@ export default function Login() {
         <p style={{ fontSize: "14px", color: "var(--color-text-secondary)", margin: 0 }}>Gestão de ocorrências urbanas</p>
       </div>
 
-      {/* Card do formulário */}
       <Card style={{ width: "100%", maxWidth: "380px" }}>
         <CardHeader style={{ paddingBottom: "8px" }}>
           <p
