@@ -8,7 +8,7 @@ Este projeto é desenvolvido no **Projeto Integrador V** do curso de Engenharia 
 
 ---
 
-## uncionalidades Principais (MVP)
+## Funcionalidades Principais (MVP)
 
 | Perfil            | Funcionalidades                                                                                                         |
 | ----------------- | ----------------------------------------------------------------------------------------------------------------------- |
@@ -30,7 +30,7 @@ Este projeto é desenvolvido no **Projeto Integrador V** do curso de Engenharia 
 | **Ícones**        | Lucide React                    |
 | **Fonte**         | Geist Variable                  |
 | **HTTP Client**   | Axios                           |
-| **Mapas**         | Google Maps API                 |
+| **Mapas**         | Leaflet (OpenStreetMap)         |
 | **Estado Global** | React Context API + Hooks       |
 
 ---
@@ -45,26 +45,26 @@ cidade-ativa/
 ├── src/
 │   ├── assets/
 │   ├── components/
-│   │   ├── ui/
+│   │   ├── ui/                 # Componentes base (shadcn/ui)
 │   │   │   ├── badge.jsx
 │   │   │   ├── button.jsx
 │   │   │   ├── card.jsx
 │   │   │   ├── sidebar.jsx
 │   │   │   ├── table.jsx
 │   │   │   └── ...
-│   │   ├── MapView.jsx
-│   │   ├── OccurrenceCard.jsx
-│   │   ├── PrivateRoute.jsx
-│   │   ├── Sidebar.jsx
-│   │   └── StatusBadge.jsx
+│   │   ├── MapView.jsx         # Integração Leaflet
+│   │   ├── OccurrenceCard.jsx  # Card do feed de ocorrências
+│   │   ├── PrivateRoute.jsx    # Proteção de rotas por perfil
+│   │   ├── Sidebar.jsx         # Componente AppSidebar customizado
+│   │   └── StatusBadge.jsx     # Badge padronizado de status
 │   ├── context/
-│   │   └── AuthContext.jsx
+│   │   └── AuthContext.jsx     # Gerenciamento de login e permissões
 │   ├── hooks/
-│   │   ├── useAuth.js
+│   │   ├── useAuth.js          # Hook de acesso ao usuário
 │   │   └── use-mobile.js
 │   ├── lib/
 │   │   └── utils.js
-│   ├── pages/
+│   ├── pages/                  # Módulos de visualização
 │   │   ├── Admin/
 │   │   ├── Atendimento/
 │   │   ├── Configuracoes/
@@ -77,11 +77,12 @@ cidade-ativa/
 │   │   ├── api.js
 │   │   ├── auth.service.js
 │   │   └── maps.service.js
-│   ├── App.jsx
+│   ├── App.jsx                 # Configuração de rotas e providers
 │   └── main.jsx
 ├── tailwind.config.js
 ├── vite.config.js
 └── package.json
+
 ```
 
 ---
@@ -90,34 +91,39 @@ cidade-ativa/
 
 1. **Clone o repositório**:
 
-   ```bash
-   git clone https://github.com/SilveStredecendent/cidade-ativa.git
-   cd cidade-ativa
-   ```
+```bash
+git clone [https://github.com/SilveStredecendent/cidade-ativa.git](https://github.com/SilveStredecendent/cidade-ativa.git)
+cd cidade-ativa
+
+```
 
 2. **Instale as dependências**:
 
-   ```bash
-   npm install
-   ```
+```bash
+npm install
+
+```
 
 3. **Configure as variáveis de ambiente**:
 
-   ```bash
-   cp .env.example .env
-   ```
+```bash
+cp .env.example .env
 
-   Edite o `.env` e preencha sua chave do Google Maps:
+```
 
-   ```env
-   VITE_GOOGLE_MAPS_KEY=sua_chave_aqui
-   VITE_API_BASE_URL=http://localhost:3000
-   ```
+Edite o `.env` e preencha a URL da sua API:
+
+```env
+VITE_API_BASE_URL=http://localhost:3000
+
+```
 
 4. **Inicie o servidor de desenvolvimento**:
-   ```bash
-   npm run dev
-   ```
+
+```bash
+npm run dev
+
+```
 
 ---
 
@@ -142,6 +148,7 @@ docs:     alteração em documentação
 style:    ajuste visual sem lógica
 refactor: melhoria de estrutura
 test:     testes
+
 ```
 
 ---
@@ -157,4 +164,9 @@ test:     testes
 ---
 
 **Instituição**: Centro Universitário de Ourinhos (Unifio)
+
 **Curso**: Engenharia de Software
+
+```
+
+```
