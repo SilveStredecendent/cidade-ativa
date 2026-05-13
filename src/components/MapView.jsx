@@ -1,148 +1,132 @@
-import { useEffect, useRef, useState } from "react";
-import { MapPin, Loader2 } from "lucide-react";
+import React, { useState } from "react"; // Adicionando useState
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap } from "react-leaflet";
+import { LocateFixed } from "lucide-react";
+import "leaflet/dist/leaflet.css";
+import L from "leaflet";
 
-const URGENCIA_CORES = {
-  alta: "#E53E3E",
-  media: "#D97706",
-  baixa: "#6B7280",
-};
+// Ícones padrão do Leaflet (para as ocorrências)
+import markerIcon from "leaflet/dist/images/marker-icon.png";
+import markerShadow from "leaflet/dist/images/marker-shadow.png";
 
-const STATUS_CORES = {
-  ABERTA: "#D97706",
-  "EM ATENDIMENTO": "#3B82F6",
-  RESOLVIDA: "#10B981",
-  CANCELADA: "#6B7280",
-};
+const DefaultIcon = L.icon({
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+});
+L.Marker.prototype.options.icon = DefaultIcon;
 
-function criarIconePin(cor) {
-  const svg = `
-    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="40" viewBox="0 0 32 40">
-      <path d="M16 0C7.163 0 0 7.163 0 16c0 10 16 24 16 24S32 26 32 16C32 7.163 24.837 0 16 0z"
-        fill="${cor}" stroke="white" stroke-width="2"/>
-      <circle cx="16" cy="16" r="6" fill="white"/>
-    </svg>
-  `;
-  return {
-    url: "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg),
-    scaledSize: { width: 28, height: 35 },
-    anchor: { x: 14, y: 35 },
+// CONFIGURAÇÃO DO NOVO ÍCONE: Pin Azul Especial para o Usuário
+const UserIcon = L.icon({
+  // Usando uma imagem online de pin azul para teste fácil (pode trocar por asset local)
+  iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png",
+  shadowUrl: markerShadow,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+});
+
+// Subcomponente: Botão de Localização (apenas envia o comando)
+function LocationButton({ onLocationFound }) {
+  const map = useMap();
+
+  const handleLocate = () => {
+    map.locate({ setView: true, maxZoom: 16 });
   };
+
+  // Evento disparado quando a localização é encontrada
+  useMapEvents({
+    locationfound(e) {
+      console.log("Sua localização:", e.latlng);
+      if (onLocationFound) onLocationFound(e.latlng); // Envia as coordenadas para o componente pai
+    },
+    locationerror() {
+      alert("Não foi possível obter sua localização. Verifique as permissões do navegador.");
+    },
+  });
+
+  return (
+    <button
+      onClick={handleLocate}
+      title="Minha Localização"
+      style={{
+        position: "absolute",
+        top: "80px", // Abaixo dos botões de Zoom (+/-)
+        left: "10px",
+        zIndex: 1000,
+        background: "white",
+        border: "2px solid rgba(0,0,0,0.2)",
+        borderRadius: "4px",
+        width: "34px",
+        height: "34px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        cursor: "pointer",
+        color: "#333",
+        boxShadow: "0 1px 5px rgba(0,0,0,0.4)",
+      }}
+      onMouseEnter={(e) => (e.currentTarget.style.background = "#f4f4f4")}
+      onMouseLeave={(e) => (e.currentTarget.style.background = "white")}
+    >
+      <LocateFixed size={18} />
+    </button>
+  );
 }
 
-export default function MapView({
-  ocorrencias = [],
-  onOcorrenciaClick,
-  onMapClick,
-  ocorrenciaAtiva = null,
-  selectedLocation = null, // NOVA PROP: para mostrar o pin selecionado no form
-  centroInicial = { lat: -22.9774, lng: -49.8661 }, // Ajustado para centro de Ourinhos
-  zoom = 14,
-}) {
-  const mapaRef = useRef(null);
-  const googleMapRef = useRef(null);
-  const marcadoresRef = useRef([]);
-  const selectedMarkerRef = useRef(null); // Ref para o pin de seleção
-  const [carregando, setCarregando] = useState(true);
-  const [erro, setErro] = useState(null);
-  const [apiCarregada, setApiCarregada] = useState(false);
+// Componente para capturar cliques no mapa (já tínhamos)
+function ClickHandler({ onMapClick }) {
+  useMapEvents({
+    click(e) {
+      if (onMapClick) onMapClick([e.latlng.lat, e.latlng.lng]);
+    },
+  });
+  return null;
+}
 
-  // 1: Carregamento da API
-  useEffect(() => {
-    if (window.google?.maps) {
-      setApiCarregada(true);
-      return;
-    }
-    const chave = import.meta.env.VITE_GOOGLE_MAPS_KEY;
-
-    console.log("Mapa carregando com a chave:", chave);
-    if (!chave) {
-      setErro("Chave da API não encontrada no .env");
-      setCarregando(false);
-      return;
-    }
-    window.__googleMapsCallback = () => setApiCarregada(true);
-    const script = document.createElement("script");
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${chave}&callback=__googleMapsCallback&language=pt-BR`;
-    script.async = true;
-    document.head.appendChild(script);
-    return () => delete window.__googleMapsCallback;
-  }, []);
-
-  // 2: Inicialização do Mapa e Listener de Clique
-  useEffect(() => {
-    if (!apiCarregada || !mapaRef.current) return;
-
-    googleMapRef.current = new window.google.maps.Map(mapaRef.current, {
-      center: selectedLocation || centroInicial,
-      zoom,
-      mapTypeControl: false,
-      streetViewControl: false,
-      fullscreenControl: false,
-    });
-
-    googleMapRef.current.addListener("click", (e) => {
-      if (onMapClick) {
-        onMapClick({ lat: e.latLng.lat(), lng: e.latLng.lng() });
-      }
-    });
-
-    setCarregando(false);
-  }, [apiCarregada]);
-
-  // 3: Marcador de Seleção (Para NovaOcorrencia.jsx)
-  useEffect(() => {
-    if (!googleMapRef.current || !selectedLocation) return;
-
-    if (selectedMarkerRef.current) {
-      selectedMarkerRef.current.setPosition(selectedLocation);
-    } else {
-      selectedMarkerRef.current = new window.google.maps.Marker({
-        position: selectedLocation,
-        map: googleMapRef.current,
-        icon: criarIconePin("#3B82F6"), // Azul para o novo pin
-        animation: window.google.maps.Animation.BOUNCE,
-      });
-    }
-  }, [selectedLocation]);
-
-  // 4: Atualiza Pins das Ocorrências Existentes
-  useEffect(() => {
-    if (!googleMapRef.current || !window.google?.maps) return;
-    marcadoresRef.current.forEach((m) => m.setMap(null));
-    marcadoresRef.current = [];
-
-    ocorrencias.forEach((oc) => {
-      if (!oc.latitude || !oc.longitude) return;
-
-      const marcador = new window.google.maps.Marker({
-        position: { lat: oc.latitude, lng: oc.longitude },
-        map: googleMapRef.current,
-        icon: criarIconePin(URGENCIA_CORES[oc.urgencia] || "#6B7280"),
-      });
-
-      marcador.addListener("click", () => onOcorrenciaClick?.(oc));
-      marcadoresRef.current.push(marcador);
-    });
-  }, [ocorrencias, apiCarregada]);
+export default function MapView({ center = [-22.97, -49.87], zoom = 14, occurrences = [], onMapClick }) {
+  // Estado para armazenar a posição do usuário ("Você está aqui")
+  const [userPosition, setUserPosition] = useState(null);
 
   return (
     <div style={{ position: "relative", width: "100%", height: "100%" }}>
-      <div ref={mapaRef} style={{ width: "100%", height: "100%" }} />
+      <MapContainer center={center} zoom={zoom} style={{ height: "100%", width: "100%", zIndex: 1 }}>
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
 
-      {carregando && (
-        <div className="absolute inset-0 bg-slate-100 flex flex-col items-center justify-center gap-2">
-          <Loader2 className="w-8 h-8 animate-spin text-slate-400" />
-          <p className="text-xs text-slate-500">Iniciando mapa oficial...</p>
-        </div>
-      )}
+        {/* Adicionando o botão de localização e passando o setSetter */}
+        <LocationButton onLocationFound={setUserPosition} />
 
-      {erro && (
-        <div className="absolute inset-0 bg-red-50 flex flex-col items-center justify-center p-6 text-center">
-          <MapPin className="w-8 h-8 text-red-400 mb-2" />
-          <p className="text-sm font-bold text-red-900">Erro na API do Google</p>
-          <p className="text-xs text-red-600">{erro}</p>
-        </div>
-      )}
+        {onMapClick && <ClickHandler onMapClick={onMapClick} />}
+
+        {/* RENDERIZAÇÃO DO PIN DO USUÁRIO conditionally */}
+        {userPosition && (
+          <Marker position={userPosition} icon={UserIcon}>
+            <Popup>Você está aqui!</Popup>
+          </Marker>
+        )}
+
+        {/* Renderiza marcadores das ocorrências existentes */}
+        {occurrences.map((oc) => {
+          const lat = oc.lat !== undefined ? oc.lat : oc.latitude;
+          const lng = oc.lng !== undefined ? oc.lng : oc.longitude;
+          if (lat == null || lng == null) return null;
+
+          return (
+            <Marker key={oc.id} position={[lat, lng]}>
+              <Popup>
+                <div style={{ fontSize: "12px" }}>
+                  <strong>{oc.titulo}</strong>
+                  <br />
+                  {oc.local}
+                </div>
+              </Popup>
+            </Marker>
+          );
+        })}
+      </MapContainer>
     </div>
   );
 }

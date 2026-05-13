@@ -206,13 +206,9 @@ export default function Home() {
             }}
           >
             <MapView
-              ocorrencias={ocorrenciasFiltradas.map((oc) => ({
-                ...oc,
-                latitude: null,
-                longitude: null,
-              }))}
-              onOcorrenciaClick={setOcorrenciaAtiva}
-              ocorrenciaAtiva={ocorrenciaAtiva?.id}
+              occurrences={ocorrenciasFiltradas} // Passa direto! O MapView se vira com os dados.
+              onMapClick={(coords) => console.log("Clicou no mapa em:", coords)}
+              activeId={ocorrenciaAtiva?.id}
             />
 
             {/* Popup de ocorrência clicada */}
