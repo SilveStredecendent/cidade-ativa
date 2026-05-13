@@ -81,6 +81,7 @@ cidade-ativa/
 │   └── main.jsx
 ├── tailwind.config.js
 ├── vite.config.js
+├── vercel.json
 └── package.json
 
 ```
@@ -163,6 +164,6 @@ test:     testes
 
 ---
 
-**Instituição**: Centro Universitário de Ourinhos (Unifio)
+**Instituição**: Centro Universitario de Ourinhos (Unifio)
 
 **Curso**: Engenharia de Software
