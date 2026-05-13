@@ -45,26 +45,26 @@ cidade-ativa/
 ├── src/
 │   ├── assets/
 │   ├── components/
-│   │   ├── ui/                 # Componentes base (shadcn/ui)
+│   │   ├── ui/
 │   │   │   ├── badge.jsx
 │   │   │   ├── button.jsx
 │   │   │   ├── card.jsx
 │   │   │   ├── sidebar.jsx
 │   │   │   ├── table.jsx
 │   │   │   └── ...
-│   │   ├── MapView.jsx         # Integração Leaflet
-│   │   ├── OccurrenceCard.jsx  # Card do feed de ocorrências
-│   │   ├── PrivateRoute.jsx    # Proteção de rotas por perfil
-│   │   ├── Sidebar.jsx         # Componente AppSidebar customizado
-│   │   └── StatusBadge.jsx     # Badge padronizado de status
+│   │   ├── MapView.jsx
+│   │   ├── OccurrenceCard.jsx
+│   │   ├── PrivateRoute.jsx
+│   │   ├── Sidebar.jsx
+│   │   └── StatusBadge.jsx
 │   ├── context/
-│   │   └── AuthContext.jsx     # Gerenciamento de login e permissões
+│   │   └── AuthContext.jsx
 │   ├── hooks/
-│   │   ├── useAuth.js          # Hook de acesso ao usuário
+│   │   ├── useAuth.js
 │   │   └── use-mobile.js
 │   ├── lib/
 │   │   └── utils.js
-│   ├── pages/                  # Módulos de visualização
+│   ├── pages/
 │   │   ├── Admin/
 │   │   ├── Atendimento/
 │   │   ├── Configuracoes/
@@ -77,7 +77,7 @@ cidade-ativa/
 │   │   ├── api.js
 │   │   ├── auth.service.js
 │   │   └── maps.service.js
-│   ├── App.jsx                 # Configuração de rotas e providers
+│   ├── App.jsx
 │   └── main.jsx
 ├── tailwind.config.js
 ├── vite.config.js
@@ -166,7 +166,3 @@ test:     testes
 **Instituição**: Centro Universitário de Ourinhos (Unifio)
 
 **Curso**: Engenharia de Software
-
-```
-
-```
