@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, MapPin, UploadCloud, AlertCircle } from "lucide-react";
-import MapView from "@/components/MapView";
+import MapPicker from "@/components/MapPicker";
 
 export default function NovaOcorrencia() {
   const navigate = useNavigate();
@@ -183,9 +183,10 @@ export default function NovaOcorrencia() {
           </div>
 
           <div style={{ flex: 1, position: "relative", minWidth: 0, minHeight: 0 }}>
-            <MapView
-              onMapClick={(novasCoordenadas) => {
-                setCoords({ lat: novasCoordenadas[0], lng: novasCoordenadas[1] });
+            <MapPicker
+              selectedLocation={coords}
+              onLocationSelect={(novasCoordenadas) => {
+                setCoords(novasCoordenadas);
               }}
             />
           </div>
