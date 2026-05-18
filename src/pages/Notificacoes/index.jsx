@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { AppSidebar } from "@/components/Sidebar";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
@@ -11,6 +12,11 @@ const NOTIFICACOES_MOCK = [
 ];
 
 export default function NotificacoesPage() {
+  const [notificacoes, setNotificacoes] = useState(NOTIFICACOES_MOCK);
+
+  function marcarTodasComoLidas() {
+    setNotificacoes((prev) => prev.map((n) => ({ ...n, lida: true })));
+  }
   return (
     <div
       style={{
@@ -48,7 +54,7 @@ export default function NotificacoesPage() {
           <Separator orientation="vertical" className="h-4" />
           <h1 style={{ fontSize: "14px", fontWeight: "600", margin: 0, color: "#0f172a" }}>Notificações</h1>
           <div style={{ marginLeft: "auto" }}>
-            <Button variant="ghost" size="sm" style={{ fontSize: "12px", color: "#3b82f6", fontWeight: "600" }}>
+            <Button variant="ghost" size="sm" onClick={marcarTodasComoLidas} style={{ fontSize: "12px", color: "#3b82f6", fontWeight: "600" }}>
               Marcar todas como lidas
             </Button>
           </div>
@@ -56,7 +62,7 @@ export default function NotificacoesPage() {
 
         <div style={{ flex: 1, overflowY: "auto", padding: "24px" }}>
           <div style={{ maxWidth: "720px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "12px" }}>
-            {NOTIFICACOES_MOCK.map((n) => (
+            {notificacoes.map((n) => (
               <div
                 key={n.id}
                 style={{

@@ -13,7 +13,16 @@ import {
   SidebarSeparator,
 } from "@/components/ui/sidebar";
 import { Badge } from "@/components/ui/badge";
-import { Home, MapPin, ClipboardList, LayoutDashboard, ShieldCheck, Bell, Settings, LogOut } from "lucide-react";
+import {
+  Home,
+  MapPin,
+  ClipboardList,
+  LayoutDashboard,
+  ShieldCheck,
+  Bell,
+  Settings,
+  LogOut,
+} from "lucide-react";
 
 const NAV_ITEMS = {
   cidadao: [
@@ -66,20 +75,21 @@ export function AppSidebar() {
   }
 
   function estaAtivo(to) {
-    return location.pathname === to || (to !== "/home" && location.pathname.startsWith(to));
+    return (
+      location.pathname === to ||
+      (to !== "/home" && location.pathname.startsWith(to))
+    );
   }
 
   return (
     <Sidebar>
       <SidebarHeader style={{ padding: "16px" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+        <div className="flex items-center gap-2.5 rounded-xl p-1.5 -m-1.5 transition-colors hover:bg-sidebar-accent">
           <div
             style={{
               width: "36px",
               height: "36px",
               borderRadius: "10px",
-              background: "var(--color-text-primary)",
-              color: "var(--color-background-primary)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -92,8 +102,12 @@ export function AppSidebar() {
             CA
           </div>
           <div>
-            <p style={{ fontSize: "14px", fontWeight: "600", color: "var(--color-text-primary)", margin: 0 }}>Cidade Ativa</p>
-            <p style={{ fontSize: "11px", color: "var(--color-text-tertiary)", margin: 0 }}>Gestão Urbana</p>
+            <p className="text-sidebar-foreground" style={{ fontSize: "14px", fontWeight: "600", margin: 0 }}>
+              Cidade Ativa
+            </p>
+            <p className="text-sidebar-foreground/50" style={{ fontSize: "11px", margin: 0 }}>
+              Gestão Urbana
+            </p>
           </div>
         </div>
       </SidebarHeader>
@@ -102,15 +116,35 @@ export function AppSidebar() {
 
       <SidebarContent style={{ padding: "8px" }}>
         <SidebarGroup>
-          <SidebarGroupLabel style={{ fontSize: "10px", letterSpacing: "0.08em" }}>Navegação</SidebarGroupLabel>
+          <SidebarGroupLabel
+            style={{ fontSize: "10px", letterSpacing: "0.08em" }}
+          >
+            Navegação
+          </SidebarGroupLabel>
           <SidebarMenu>
             {itens.map((item) => (
               <SidebarMenuItem key={item.to}>
-                <SidebarMenuButton onClick={() => navigate(item.to)} isActive={estaAtivo(item.to)} style={{ gap: "10px" }}>
-                  <item.icon style={{ width: "15px", height: "15px", flexShrink: 0 }} />
-                  <span style={{ flex: 1, fontSize: "13px" }}>{item.label}</span>
+                <SidebarMenuButton
+                  onClick={() => navigate(item.to)}
+                  isActive={estaAtivo(item.to)}
+                  style={{ gap: "10px" }}
+                >
+                  <item.icon
+                    style={{ width: "15px", height: "15px", flexShrink: 0 }}
+                  />
+                  <span style={{ flex: 1, fontSize: "13px" }}>
+                    {item.label}
+                  </span>
                   {item.badge && (
-                    <Badge variant="secondary" style={{ fontSize: "10px", height: "18px", minWidth: "18px", padding: "0 5px" }}>
+                    <Badge
+                      variant="secondary"
+                      style={{
+                        fontSize: "10px",
+                        height: "18px",
+                        minWidth: "18px",
+                        padding: "0 5px",
+                      }}
+                    >
                       {item.badge}
                     </Badge>
                   )}
@@ -150,7 +184,7 @@ export function AppSidebar() {
               fontWeight: "600",
               color: "var(--color-text-secondary)",
             }}
-          ></div>
+          >{inicial}</div>
           <div style={{ overflow: "hidden", flex: 1 }}>
             <p
               style={{
@@ -165,19 +199,33 @@ export function AppSidebar() {
             >
               {user?.nome ?? "Usuário"}
             </p>
-            <p style={{ fontSize: "11px", color: "var(--color-text-tertiary)", margin: 0 }}>{PERFIL_LABEL[perfil]}</p>
+            <p
+              style={{
+                fontSize: "11px",
+                color: "var(--color-text-tertiary)",
+                margin: 0,
+              }}
+            >
+              {PERFIL_LABEL[perfil]}
+            </p>
           </div>
         </div>
 
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton onClick={() => navigate("/configuracoes")} style={{ gap: "10px" }}>
+            <SidebarMenuButton
+              onClick={() => navigate("/configuracoes")}
+              style={{ gap: "10px" }}
+            >
               <Settings style={{ width: "14px", height: "14px" }} />
               <span style={{ fontSize: "13px" }}>Configurações</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton onClick={handleLogout} style={{ gap: "10px", color: "var(--color-text-danger)" }}>
+            <SidebarMenuButton
+              onClick={handleLogout}
+              style={{ gap: "10px", color: "var(--color-text-danger)" }}
+            >
               <LogOut style={{ width: "14px", height: "14px" }} />
               <span style={{ fontSize: "13px" }}>Sair</span>
             </SidebarMenuButton>
