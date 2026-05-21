@@ -1,13 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap } from "react-leaflet";
-import { LocateFixed } from "lucide-react";
+import { LocateFixed, Search, X, Loader2 } from "lucide-react";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 
-// 1. PIN CINZA: Ocorrências do banco
 const DefaultIcon = L.icon({
   iconUrl: markerIcon,
   shadowUrl: markerShadow,
@@ -16,7 +14,6 @@ const DefaultIcon = L.icon({
 });
 L.Marker.prototype.options.icon = DefaultIcon;
 
-// 2. PIN AZUL: Localização atual (GPS)
 const UserIcon = L.icon({
   iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png",
   shadowUrl: markerShadow,
@@ -25,8 +22,7 @@ const UserIcon = L.icon({
   popupAnchor: [1, -34],
 });
 
-// 3. NOVO PIN LARANJA: Para quando o usuário clica num local vazio da Home
-const TemporaryIcon = L.icon({
+const ClickedIcon = L.icon({
   iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png",
   shadowUrl: markerShadow,
   iconSize: [25, 41],
@@ -34,23 +30,30 @@ const TemporaryIcon = L.icon({
   popupAnchor: [1, -34],
 });
 
-// Componente do Botão GPS
-function LocationFeedButton({ onLocationFound }) {
+function FlyTo({ position }) {
   const map = useMap();
+  useEffect(() => {
+    if (position) {
+      map.flyTo([position.lat, position.lng], 16, { duration: 1.2 });
+    }
+  }, [position]);
+  return null;
+}
 
+function LocationButton({ onLocationFound }) {
+  const map = useMap();
   useMapEvents({
     locationfound(e) {
       onLocationFound(e.latlng);
     },
     locationerror() {
-      alert("Não foi possível obter sua localização. Verifique as permissões do navegador.");
+      alert("Não foi possível obter sua localização.");
     },
   });
-
   return (
     <button
       onClick={() => map.locate({ setView: true, maxZoom: 16 })}
-      title="Onde eu estou?"
+      title="Minha localização"
       style={{
         position: "absolute",
         top: "80px",
@@ -76,62 +79,208 @@ function LocationFeedButton({ onLocationFound }) {
   );
 }
 
-// Componente que escuta os cliques
 function ClickHandler({ onMapClick }) {
   useMapEvents({
     click(e) {
-      if (onMapClick) onMapClick([e.latlng.lat, e.latlng.lng]);
+      onMapClick?.([e.latlng.lat, e.latlng.lng]);
     },
   });
   return null;
 }
 
-export default function MapView({ center = [-22.97, -49.87], zoom = 14, occurrences = [], onMapClick }) {
+function SearchBar({ onResult }) {
+  const [query, setQuery] = useState("");
+  const [sugestoes, setSugestoes] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [aberto, setAberto] = useState(false);
+  const timerRef = useRef(null);
+
+  function handleChange(e) {
+    const valor = e.target.value;
+    setQuery(valor);
+    clearTimeout(timerRef.current);
+
+    if (valor.trim().length < 3) {
+      setSugestoes([]);
+      setAberto(false);
+      return;
+    }
+
+    timerRef.current = setTimeout(async () => {
+      setLoading(true);
+      try {
+        const url = `https://nominatim.openstreetmap.org/search?` + `q=${encodeURIComponent(valor)}` + `&format=json&limit=5&countrycodes=br`;
+
+        const res = await fetch(url, {
+          headers: { "Accept-Language": "pt-BR" },
+        });
+        const data = await res.json();
+        setSugestoes(data);
+        setAberto(data.length > 0);
+      } catch {
+        setSugestoes([]);
+      } finally {
+        setLoading(false);
+      }
+    }, 500);
+  }
+
+  function selecionar(item) {
+    setQuery(item.display_name.split(",")[0]);
+    setSugestoes([]);
+    setAberto(false);
+    onResult({ lat: parseFloat(item.lat), lng: parseFloat(item.lon) });
+  }
+
+  function limpar() {
+    setQuery("");
+    setSugestoes([]);
+    setAberto(false);
+  }
+
+  return (
+    <div
+      style={{
+        position: "absolute",
+        top: "12px",
+        left: "50%",
+        transform: "translateX(-50%)",
+        zIndex: 1000,
+        width: "min(380px, calc(100% - 100px))",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          background: "white",
+          borderRadius: "8px",
+          border: "1.5px solid #e2e8f0",
+          boxShadow: "0 2px 12px rgba(0,0,0,0.12)",
+          padding: "0 12px",
+          height: "40px",
+          gap: "8px",
+        }}
+      >
+        {loading ? (
+          <Loader2 size={15} style={{ color: "#94a3b8", flexShrink: 0, animation: "spin .8s linear infinite" }} />
+        ) : (
+          <Search size={15} style={{ color: "#94a3b8", flexShrink: 0 }} />
+        )}
+        <input
+          type="text"
+          placeholder="Buscar endereço"
+          value={query}
+          onChange={handleChange}
+          style={{
+            flex: 1,
+            border: "none",
+            outline: "none",
+            fontSize: "13px",
+            color: "#0f172a",
+            background: "transparent",
+          }}
+        />
+        {query && (
+          <button
+            onClick={limpar}
+            style={{
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              color: "#94a3b8",
+              display: "flex",
+              alignItems: "center",
+              padding: 0,
+            }}
+          >
+            <X size={14} />
+          </button>
+        )}
+      </div>
+
+      {aberto && sugestoes.length > 0 && (
+        <div
+          style={{
+            marginTop: "4px",
+            background: "white",
+            borderRadius: "8px",
+            border: "1px solid #e2e8f0",
+            boxShadow: "0 4px 16px rgba(0,0,0,0.12)",
+            overflow: "hidden",
+          }}
+        >
+          {sugestoes.map((item, i) => (
+            <button
+              key={i}
+              onClick={() => selecionar(item)}
+              style={{
+                display: "block",
+                width: "100%",
+                textAlign: "left",
+                padding: "10px 14px",
+                background: "none",
+                border: "none",
+                borderBottom: i < sugestoes.length - 1 ? "1px solid #f1f5f9" : "none",
+                cursor: "pointer",
+                transition: "background .1s",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.background = "#f8fafc")}
+              onMouseLeave={(e) => (e.currentTarget.style.background = "none")}
+            >
+              <p style={{ fontSize: "13px", fontWeight: "500", color: "#0f172a", margin: "0 0 2px" }}>{item.display_name.split(",")[0]}</p>
+              <p style={{ fontSize: "11px", color: "#94a3b8", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                {item.display_name.split(",").slice(1, 4).join(",")}
+              </p>
+            </button>
+          ))}
+        </div>
+      )}
+
+      <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
+    </div>
+  );
+}
+
+export default function MapView({ center = [-22.97, -49.87], zoom = 14, occurrences = [], onMapClick, activeId }) {
   const [userPosition, setUserPosition] = useState(null);
-
-  // NOVO: Estado para guardar onde o usuário clicou na Home
   const [clickedPos, setClickedPos] = useState(null);
+  const [searchResult, setSearchResult] = useState(null);
 
-  // Função que intercepta o clique, salva a posição para o Pin Laranja e avisa a Home
-  const handleMapClick = (coords) => {
+  function handleMapClick(coords) {
     setClickedPos({ lat: coords[0], lng: coords[1] });
-    if (onMapClick) onMapClick(coords);
-  };
+    onMapClick?.(coords);
+  }
 
   return (
     <div style={{ position: "relative", width: "100%", height: "100%" }}>
       <MapContainer center={center} zoom={zoom} style={{ height: "100%", width: "100%", zIndex: 1 }}>
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+          attribution='© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-        {/* GPS */}
-        <LocationFeedButton onLocationFound={setUserPosition} />
-
-        {/* Escutador de Cliques */}
+        <LocationButton onLocationFound={setUserPosition} />
         <ClickHandler onMapClick={handleMapClick} />
 
-        {/* Desenha o PIN AZUL do GPS se houver */}
+        {searchResult && <FlyTo position={searchResult} />}
+
         {userPosition && (
           <Marker position={userPosition} icon={UserIcon}>
             <Popup>Você está aqui</Popup>
           </Marker>
         )}
 
-        {/* NOVO: Desenha o PIN LARANJA onde o usuário clicou */}
         {clickedPos && (
-          <Marker position={clickedPos} icon={TemporaryIcon}>
+          <Marker position={[clickedPos.lat, clickedPos.lng]} icon={ClickedIcon}>
             <Popup>Local selecionado</Popup>
           </Marker>
         )}
 
-        {/* Desenha os PINS CINZAS das ocorrências do banco de dados */}
         {occurrences.map((oc) => {
-          const lat = oc.lat !== undefined ? oc.lat : oc.latitude;
-          const lng = oc.lng !== undefined ? oc.lng : oc.longitude;
+          const lat = oc.lat ?? oc.latitude;
+          const lng = oc.lng ?? oc.longitude;
           if (lat == null || lng == null) return null;
-
           return (
             <Marker key={oc.id} position={[lat, lng]}>
               <Popup>
@@ -145,6 +294,8 @@ export default function MapView({ center = [-22.97, -49.87], zoom = 14, occurren
           );
         })}
       </MapContainer>
+
+      <SearchBar onResult={setSearchResult} />
     </div>
   );
 }

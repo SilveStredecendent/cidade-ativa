@@ -1,63 +1,93 @@
-import React from "react";
 import { MapPin } from "lucide-react";
-import { StatusBadge } from "./StatusBadge";
+import { StatusBadge } from "@/components/StatusBadge";
 
 const URGENCIA_COLOR = {
   alta: "#ef4444",
   media: "#f59e0b",
-  baixa: "#64748b",
+  baixa: "#94a3b8",
 };
 
-export function OccurrenceCard({ ocorrencia, onClick, isActive }) {
-  if (!ocorrencia) return null;
+const URGENCIA_BG = {
+  alta: "#fef2f2",
+  media: "#fffbeb",
+  baixa: "#f8fafc",
+};
+
+export function OccurrenceCard({ ocorrencia, isActive, onClick }) {
+  const oc = ocorrencia;
 
   return (
     <button
-      onClick={() => onClick && onClick(ocorrencia)}
+      onClick={() => onClick(oc)}
       style={{
         display: "block",
         width: "100%",
         textAlign: "left",
-        background: isActive ? "#f8fafc" : "white",
-        border: isActive ? "1px solid #cbd5e1" : "1px solid #e2e8f0",
+        background: isActive ? "#f0f9ff" : "transparent",
+        border: isActive ? "1.5px solid #bae6fd" : ".5px solid transparent",
         borderRadius: "10px",
-        padding: "14px",
+        padding: "10px 12px",
         cursor: "pointer",
-        marginBottom: "10px",
-        transition: "all 0.15s ease",
+        marginBottom: "6px",
+        transition: "all .15s",
       }}
       onMouseEnter={(e) => {
-        if (!isActive) e.currentTarget.style.borderColor = "#cbd5e1";
+        if (!isActive) e.currentTarget.style.background = "#f8fafc";
       }}
       onMouseLeave={(e) => {
-        if (!isActive) e.currentTarget.style.borderColor = "#e2e8f0";
+        if (!isActive) e.currentTarget.style.background = "transparent";
       }}
     >
-      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px", alignItems: "flex-start" }}>
-        <p style={{ fontSize: "13px", fontWeight: "600", color: "#0f172a", margin: 0, lineHeight: "1.3" }}>{ocorrencia.titulo}</p>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "5px" }}>
+        <p
+          style={{
+            fontSize: "13px",
+            fontWeight: "600",
+            color: "#0f172a",
+            margin: 0,
+            flex: 1,
+            marginRight: "8px",
+            lineHeight: "1.3",
+          }}
+        >
+          {oc.titulo}
+        </p>
         <span
           style={{
             fontSize: "10px",
             fontWeight: "800",
-            color: URGENCIA_COLOR[ocorrencia.urgencia] || URGENCIA_COLOR.baixa,
+            color: URGENCIA_COLOR[oc.urgencia],
+            background: URGENCIA_BG[oc.urgencia],
+            padding: "2px 7px",
+            borderRadius: "999px",
             textTransform: "uppercase",
             flexShrink: 0,
-            marginLeft: "12px",
+            letterSpacing: "0.04em",
           }}
         >
-          {ocorrencia.urgencia}
+          {oc.urgencia}
         </span>
       </div>
 
-      <p style={{ fontSize: "12px", color: "#64748b", margin: "0 0 12px", display: "flex", alignItems: "center", gap: "6px" }}>
-        <MapPin style={{ width: "13px", height: "13px", flexShrink: 0 }} />
-        <span style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{ocorrencia.local}</span>
+      <p
+        style={{
+          fontSize: "12px",
+          color: "#64748b",
+          margin: "0 0 7px",
+          display: "flex",
+          alignItems: "center",
+          gap: "4px",
+        }}
+      >
+        <MapPin style={{ width: "11px", height: "11px", flexShrink: 0 }} />
+        <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{oc.local}</span>
       </p>
 
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <StatusBadge status={ocorrencia.status} />
-
-        <span style={{ fontSize: "10px", color: "#94a3b8", fontWeight: "500" }}>{ocorrencia.tempo || ocorrencia.data}</span>
+        <StatusBadge status={oc.status} />
+        <span style={{ fontSize: "11px", color: "#94a3b8" }}>
+          {oc.confirmacoes} confirmações · {oc.tempo}
+        </span>
       </div>
     </button>
   );
