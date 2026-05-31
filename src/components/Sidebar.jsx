@@ -1,5 +1,6 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import icon from "@/assets/icon.png";
 import {
   Sidebar,
   SidebarContent,
@@ -85,27 +86,27 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarHeader style={{ padding: "16px" }}>
         <div className="flex items-center gap-2.5 rounded-xl p-1.5 -m-1.5 transition-colors hover:bg-sidebar-accent">
-          <div
+          <img
+            src={icon}
+            alt="Cidade Ativa"
             style={{
               width: "36px",
               height: "36px",
               borderRadius: "10px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: "13px",
-              fontWeight: "700",
-              letterSpacing: "-0.5px",
               flexShrink: 0,
             }}
-          >
-            CA
-          </div>
+          />
           <div>
-            <p className="text-sidebar-foreground" style={{ fontSize: "14px", fontWeight: "600", margin: 0 }}>
+            <p
+              className="text-sidebar-foreground"
+              style={{ fontSize: "14px", fontWeight: "600", margin: 0 }}
+            >
               Cidade Ativa
             </p>
-            <p className="text-sidebar-foreground/50" style={{ fontSize: "11px", margin: 0 }}>
+            <p
+              className="text-sidebar-foreground/50"
+              style={{ fontSize: "11px", margin: 0 }}
+            >
               Gestão Urbana
             </p>
           </div>
@@ -184,7 +185,9 @@ export function AppSidebar() {
               fontWeight: "600",
               color: "var(--color-text-secondary)",
             }}
-          >{inicial}</div>
+          >
+            {inicial}
+          </div>
           <div style={{ overflow: "hidden", flex: 1 }}>
             <p
               style={{
