@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { AppSidebar } from "@/components/Sidebar";
@@ -9,6 +9,8 @@ import { MapPin, AlertTriangle, Wrench, Droplets, Trees, Plus } from "lucide-rea
 import MapView from "@/components/MapView";
 import { OccurrenceCard } from "@/components/OccurrenceCard";
 import { StatusBadge } from "@/components/StatusBadge";
+
+const STORAGE_KEY = "@cidadeativa:ocorrencias";
 
 const CATEGORIAS = [
   { id: "todos", label: "Todos", icon: null },
@@ -28,6 +30,8 @@ const OCORRENCIAS_MOCK = [
     urgencia: "alta",
     tempo: "2h atrás",
     confirmacoes: 12,
+    lat: -22.969,
+    lng: -49.871,
   },
   {
     id: 2,
@@ -38,6 +42,8 @@ const OCORRENCIAS_MOCK = [
     urgencia: "media",
     tempo: "5h atrás",
     confirmacoes: 8,
+    lat: -22.975,
+    lng: -49.866,
   },
   {
     id: 3,
@@ -48,6 +54,8 @@ const OCORRENCIAS_MOCK = [
     urgencia: "alta",
     tempo: "1h atrás",
     confirmacoes: 21,
+    lat: -22.972,
+    lng: -49.875,
   },
   {
     id: 4,
@@ -58,14 +66,10 @@ const OCORRENCIAS_MOCK = [
     urgencia: "baixa",
     tempo: "3h atrás",
     confirmacoes: 3,
+    lat: -22.966,
+    lng: -49.862,
   },
 ];
-
-const STATUS_COLOR = {
-  ABERTA: { bg: "var(--color-background-warning)", text: "var(--color-text-warning)" },
-  "EM ATENDIMENTO": { bg: "var(--color-background-info)", text: "var(--color-text-info)" },
-  RESOLVIDA: { bg: "var(--color-background-success)", text: "var(--color-text-success)" },
-};
 
 const URGENCIA_COLOR = {
   alta: "var(--color-text-danger)",
@@ -73,13 +77,39 @@ const URGENCIA_COLOR = {
   baixa: "var(--color-text-secondary)",
 };
 
+function lerDoStorage() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+  } catch {
+    return [];
+  }
+}
+
 export default function Home() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [categoriaAtiva, setCategoriaAtiva] = useState("todos");
   const [ocorrenciaAtiva, setOcorrenciaAtiva] = useState(null);
+  const [ocorrenciasLocais, setOcorrenciasLocais] = useState(lerDoStorage);
 
-  const ocorrenciasFiltradas = categoriaAtiva === "todos" ? OCORRENCIAS_MOCK : OCORRENCIAS_MOCK.filter((o) => o.categoria === categoriaAtiva);
+  // Sincroniza quando volta da página Nova Ocorrência (mesmo SPA) ou outra aba
+  useEffect(() => {
+    function onStorage() {
+      setOcorrenciasLocais(lerDoStorage());
+    }
+    window.addEventListener("storage", onStorage);
+    // Lê imediatamente ao montar (garante dados frescos após navegação interna)
+    setOcorrenciasLocais(lerDoStorage());
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
+
+  // Mescla: locais primeiro (mais recentes no topo), depois os mocks
+  const todasOcorrencias = [...ocorrenciasLocais, ...OCORRENCIAS_MOCK];
+
+  const ocorrenciasFiltradas =
+    categoriaAtiva === "todos"
+      ? todasOcorrencias
+      : todasOcorrencias.filter((o) => o.categoria === categoriaAtiva);
 
   return (
     <div
@@ -133,11 +163,17 @@ export default function Home() {
                 fontSize: "12px",
               }}
             >
-              <span style={{ color: "var(--color-text-danger)", fontWeight: "500" }}>4 Alta</span>
+              <span style={{ color: "var(--color-text-danger)", fontWeight: "500" }}>
+                {todasOcorrencias.filter((o) => o.urgencia === "alta").length} Alta
+              </span>
               <span style={{ color: "var(--color-text-tertiary)" }}>·</span>
-              <span style={{ color: "var(--color-text-warning)", fontWeight: "500" }}>3 Média</span>
+              <span style={{ color: "var(--color-text-warning)", fontWeight: "500" }}>
+                {todasOcorrencias.filter((o) => o.urgencia === "media").length} Média
+              </span>
               <span style={{ color: "var(--color-text-tertiary)" }}>·</span>
-              <span style={{ color: "var(--color-text-secondary)", fontWeight: "500" }}>5 Baixa</span>
+              <span style={{ color: "var(--color-text-secondary)", fontWeight: "500" }}>
+                {todasOcorrencias.filter((o) => o.urgencia === "baixa").length} Baixa
+              </span>
             </div>
             <Button variant="outline" size="sm" onClick={() => navigate("/ocorrencias/nova")} style={{ gap: "6px", fontSize: "13px" }}>
               <Plus style={{ width: "14px", height: "14px" }} />
@@ -200,7 +236,7 @@ export default function Home() {
             }}
           >
             <MapView
-              occurrences={ocorrenciasFiltradas} // Passa direto! O MapView se vira com os dados.
+              occurrences={ocorrenciasFiltradas}
               onMapClick={(coords) => console.log("Clicou no mapa em:", coords)}
               activeId={ocorrenciaAtiva?.id}
             />
@@ -212,13 +248,13 @@ export default function Home() {
                   bottom: "24px",
                   left: "50%",
                   transform: "translateX(-50%)",
-                  background: "white" /* <-- A MÁGICA AQUI: Fundo branco sólido! */,
+                  background: "white",
                   border: "1px solid #e2e8f0",
                   borderRadius: "12px",
                   padding: "16px",
                   minWidth: "280px",
                   maxWidth: "320px",
-                  boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.15)" /* Sombra para destacar do mapa */,
+                  boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.15)",
                   zIndex: 10,
                 }}
               >
@@ -256,7 +292,6 @@ export default function Home() {
 
                 <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
                   <StatusBadge status={ocorrenciaAtiva.status} />
-
                   <span style={{ fontSize: "11px", color: URGENCIA_COLOR[ocorrenciaAtiva.urgencia], fontWeight: "800", textTransform: "uppercase" }}>
                     Urgência {ocorrenciaAtiva.urgencia}
                   </span>
@@ -291,9 +326,15 @@ export default function Home() {
             </div>
 
             <div style={{ flex: 1, overflowY: "auto", padding: "12px" }}>
-              {ocorrenciasFiltradas.map((oc) => (
-                <OccurrenceCard key={oc.id} ocorrencia={oc} isActive={ocorrenciaAtiva?.id === oc.id} onClick={setOcorrenciaAtiva} />
-              ))}
+              {ocorrenciasFiltradas.length === 0 ? (
+                <p style={{ fontSize: "13px", color: "var(--color-text-tertiary)", textAlign: "center", marginTop: "32px" }}>
+                  Nenhuma ocorrência nesta categoria.
+                </p>
+              ) : (
+                ocorrenciasFiltradas.map((oc) => (
+                  <OccurrenceCard key={oc.id} ocorrencia={oc} isActive={ocorrenciaAtiva?.id === oc.id} onClick={setOcorrenciaAtiva} />
+                ))
+              )}
             </div>
           </div>
         </div>
