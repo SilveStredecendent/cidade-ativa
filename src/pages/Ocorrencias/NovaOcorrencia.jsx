@@ -28,8 +28,34 @@ export default function NovaOcorrencia() {
     }
 
     setLoading(true);
-
     await new Promise((resolve) => setTimeout(resolve, 800));
+
+    // Monta o objeto da ocorrência com todos os dados do formulário + coordenadas
+    const agora = new Date();
+    const novaOcorrencia = {
+      id: `local-${Date.now()}`,
+      titulo: formData.titulo,
+      categoria: formData.categoria,
+      descricao: formData.descricao,
+      lat: coords.lat,
+      lng: coords.lng,
+      local: `${coords.lat.toFixed(5)}, ${coords.lng.toFixed(5)}`,
+      status: "ABERTA",
+      urgencia: "media",
+      tempo: "Agora",
+      confirmacoes: 0,
+      data: agora.toLocaleDateString("pt-BR"),
+      criadoEm: agora.toISOString(),
+    };
+
+    // Persiste no localStorage
+    const STORAGE_KEY = "@cidadeativa:ocorrencias";
+    const armazenadas = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    armazenadas.unshift(novaOcorrencia);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(armazenadas));
+
+    // Dispara evento storage para sincronizar outras abas/páginas abertas
+    window.dispatchEvent(new Event("storage"));
 
     alert("Ocorrência registrada com sucesso!");
     navigate("/ocorrencias");

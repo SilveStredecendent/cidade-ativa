@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AppSidebar } from "@/components/Sidebar";
 import { SidebarTrigger } from "@/components/ui/sidebar";
@@ -6,35 +6,81 @@ import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Search, Plus, Eye } from "lucide-react";
+import { Search, Plus, Eye, Trash2 } from "lucide-react";
 import { StatusBadge } from "@/components/StatusBadge";
 
-// Mock de dados com categorias e status padronizados
-const MINHAS_OCORRENCIAS = [
-  { id: "2026-001", titulo: "Buraco na via principal", categoria: "Buraco", data: "24/10/2026", status: "ABERTA", urgencia: "alta" },
+const STORAGE_KEY = "@cidadeativa:ocorrencias";
+
+// Mocks fixos (simulam ocorrências já existentes no sistema)
+const OCORRENCIAS_MOCK = [
+  { id: "2026-001", titulo: "Buraco na via principal", categoria: "Buraco na Via", data: "24/10/2026", status: "ABERTA", urgencia: "alta" },
   { id: "2026-002", titulo: "Alagamento após chuva", categoria: "Alagamento", data: "20/10/2026", status: "EM ATENDIMENTO", urgencia: "media" },
-  { id: "2026-003", titulo: "Lâmpada queimada", categoria: "Iluminação", data: "15/09/2026", status: "RESOLVIDA", urgencia: "baixa" },
+  { id: "2026-003", titulo: "Lâmpada queimada", categoria: "Iluminação Pública", data: "15/09/2026", status: "RESOLVIDA", urgencia: "baixa" },
 ];
 
-const STATUS_STYLE = {
-  ABERTA: "bg-orange-100 text-orange-700",
-  "EM ATENDIMENTO": "bg-blue-100 text-blue-700",
-  RESOLVIDA: "bg-green-100 text-green-700",
+// Mapa de categoria (slug → label legível)
+const CATEGORIA_LABEL = {
+  buraco: "Buraco na Via",
+  alagamento: "Alagamento",
+  iluminacao: "Iluminação Pública",
+  arvore: "Queda de Árvore",
+  obra: "Obra",
 };
+
+function lerDoStorage() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+  } catch {
+    return [];
+  }
+}
 
 export default function OcorrenciasPage() {
   const navigate = useNavigate();
   const [busca, setBusca] = useState("");
   const [filtroStatus, setFiltroStatus] = useState("todos");
+  const [ocorrenciasLocais, setOcorrenciasLocais] = useState(lerDoStorage);
 
-  const filtradas = MINHAS_OCORRENCIAS.filter((oc) => {
-    const buscaOk = oc.titulo.toLowerCase().includes(busca.toLowerCase()) || oc.id.includes(busca);
+  // Sincroniza com localStorage quando outras páginas salvam dados
+  useEffect(() => {
+    function onStorage() {
+      setOcorrenciasLocais(lerDoStorage());
+    }
+    window.addEventListener("storage", onStorage);
+    setOcorrenciasLocais(lerDoStorage());
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
+
+  // Transforma ocorrências locais para o formato da tabela
+  const locaisFormatadas = ocorrenciasLocais.map((oc) => ({
+    id: oc.id,
+    titulo: oc.titulo,
+    categoria: CATEGORIA_LABEL[oc.categoria] || oc.categoria,
+    data: oc.data || new Date(oc.criadoEm).toLocaleDateString("pt-BR"),
+    status: oc.status,
+    urgencia: oc.urgencia,
+    isLocal: true,
+  }));
+
+  // Mescla: locais primeiro (mais recentes), depois os mocks
+  const todasOcorrencias = [...locaisFormatadas, ...OCORRENCIAS_MOCK];
+
+  const filtradas = todasOcorrencias.filter((oc) => {
+    const buscaOk = oc.titulo.toLowerCase().includes(busca.toLowerCase()) || String(oc.id).includes(busca);
     const statusOk =
       filtroStatus === "todos" ||
       (filtroStatus === "abertas" && oc.status === "ABERTA") ||
+      (filtroStatus === "em_atendimento" && oc.status === "EM ATENDIMENTO") ||
       (filtroStatus === "resolvidas" && oc.status === "RESOLVIDA");
     return buscaOk && statusOk;
   });
+
+  function excluirLocal(id) {
+    const novaLista = ocorrenciasLocais.filter((oc) => oc.id !== id);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(novaLista));
+    setOcorrenciasLocais(novaLista);
+    window.dispatchEvent(new Event("storage"));
+  }
 
   return (
     <div
@@ -80,7 +126,9 @@ export default function OcorrenciasPage() {
         </header>
 
         <div style={{ flex: 1, overflowY: "auto", padding: "24px" }}>
-          <div style={{ maxWidth: "900px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "16px" }}>
+          <div style={{ maxWidth: "960px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "16px" }}>
+
+            {/* Barra de filtros */}
             <div
               style={{
                 display: "flex",
@@ -118,6 +166,7 @@ export default function OcorrenciasPage() {
                 {[
                   ["todos", "Todos"],
                   ["abertas", "Abertas"],
+                  ["em_atendimento", "Em atendimento"],
                   ["resolvidas", "Resolvidas"],
                 ].map(([val, label]) => (
                   <button
@@ -141,11 +190,37 @@ export default function OcorrenciasPage() {
               </div>
             </div>
 
+            {/* Contadores rápidos */}
+            <div style={{ display: "flex", gap: "12px" }}>
+              {[
+                { label: "Total", valor: todasOcorrencias.length, cor: "#0f172a" },
+                { label: "Abertas", valor: todasOcorrencias.filter((o) => o.status === "ABERTA").length, cor: "#d97706" },
+                { label: "Em atendimento", valor: todasOcorrencias.filter((o) => o.status === "EM ATENDIMENTO").length, cor: "#2563eb" },
+                { label: "Resolvidas", valor: todasOcorrencias.filter((o) => o.status === "RESOLVIDA").length, cor: "#16a34a" },
+              ].map(({ label, valor, cor }) => (
+                <div
+                  key={label}
+                  style={{
+                    background: "white",
+                    border: ".5px solid #e2e8f0",
+                    borderRadius: "10px",
+                    padding: "10px 16px",
+                    flex: 1,
+                    textAlign: "center",
+                  }}
+                >
+                  <p style={{ fontSize: "22px", fontWeight: "700", color: cor, margin: 0 }}>{valor}</p>
+                  <p style={{ fontSize: "11px", color: "#64748b", margin: 0 }}>{label}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* Tabela */}
             <div style={{ background: "white", borderRadius: "12px", border: ".5px solid #e2e8f0", overflow: "hidden" }}>
               <Table>
                 <TableHeader className="bg-slate-50/80">
                   <TableRow>
-                    <TableHead className="w-[120px]">Protocolo</TableHead>
+                    <TableHead className="w-[140px]">Protocolo</TableHead>
                     <TableHead>Título</TableHead>
                     <TableHead>Categoria</TableHead>
                     <TableHead>Data</TableHead>
@@ -156,7 +231,25 @@ export default function OcorrenciasPage() {
                 <TableBody>
                   {filtradas.map((oc) => (
                     <TableRow key={oc.id}>
-                      <TableCell className="font-mono text-xs text-slate-500">#{oc.id}</TableCell>
+                      <TableCell className="font-mono text-xs text-slate-500">
+                        {oc.isLocal ? (
+                          <span style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
+                            <span
+                              style={{
+                                width: "6px",
+                                height: "6px",
+                                borderRadius: "50%",
+                                background: "#3b82f6",
+                                display: "inline-block",
+                                flexShrink: 0,
+                              }}
+                            />
+                            Local
+                          </span>
+                        ) : (
+                          `#${oc.id}`
+                        )}
+                      </TableCell>
                       <TableCell className="font-medium text-slate-900">{oc.titulo}</TableCell>
                       <TableCell className="text-slate-500">{oc.categoria}</TableCell>
                       <TableCell className="text-slate-500">{oc.data}</TableCell>
@@ -164,9 +257,22 @@ export default function OcorrenciasPage() {
                         <StatusBadge status={oc.status} />
                       </TableCell>
                       <TableCell className="text-right">
-                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-slate-400 hover:text-blue-600">
-                          <Eye className="w-4 h-4" />
-                        </Button>
+                        <div style={{ display: "flex", justifyContent: "flex-end", gap: "4px" }}>
+                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-slate-400 hover:text-blue-600">
+                            <Eye className="w-4 h-4" />
+                          </Button>
+                          {oc.isLocal && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 w-8 p-0 text-slate-400 hover:text-red-500"
+                              onClick={() => excluirLocal(oc.id)}
+                              title="Remover ocorrência local"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          )}
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
